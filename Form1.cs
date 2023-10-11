@@ -51,6 +51,23 @@ namespace GK_Proj1
                 else
                 {
                     // Klikniêcie lewym przyciskiem myszy po rozpoczêciu rysowania linii - dodaj wierzcho³ek linii
+                    
+                    foreach(var rect in currPoints)
+                    {
+                        if (Math.Abs(e.Location.X - PolygonStart.X) <= 5 && Math.Abs(e.Location.Y - PolygonStart.Y) <= 5)
+                        {
+                            CreatePolygon(e);
+                        }
+
+                        if (Math.Abs(e.Location.X - rect.Item1.X) <= 5 && Math.Abs(e.Location.Y - rect.Item1.Y) <=5)
+                        {
+                            Line Line = new Line(lineStartPoint, rect.Item1);
+                            currLines.Add(Line);
+                            lineStartPoint = rect.Item1;
+                            return;
+                        }
+                    }
+
                     lineEndPoint = e.Location;
                     Rectangle newRect = new Rectangle(e.X - 3, e.Y - 3, 8, 8);
                     Point point = new Point(e.X, e.Y);
@@ -60,28 +77,9 @@ namespace GK_Proj1
                     currLines.Add(newLine);
                     lineStartPoint = point;
 
-                    if (e.Location.X - PolygonStart.X <= 7 && e.Location.Y - PolygonStart.Y <= 7)
+                    if (Math.Abs(e.Location.X - PolygonStart.X) <= 5 && Math.Abs(e.Location.Y - PolygonStart.Y) <= 5)
                     {
-                        Polygon newPolygon = new Polygon(currPoints, currLines);
-
-                        // Rysuj nowy poligon na tempBitmap
-                        using (Graphics g = Graphics.FromImage(tempBitmap))
-                        {
-                            foreach (var rect in currPoints)
-                            {
-                                g.FillRectangle(Brushes.Black, rect.Item2);
-                            }
-                            foreach (var line in currLines)
-                            {
-                                g.DrawLine(Pens.Black, line.start, line.end);
-                            }
-                        }
-
-                        isDrawingLine = false;
-                        polygons.Add(newPolygon);
-                        currPoints.Clear();
-                        currLines.Clear();
-                        lineStartPoint = new Point(0, 0);
+                        CreatePolygon(e);
 
                     }
                     // Co jesli naciskam na juz istniejay wierzcholek w obecnym wielokacie
@@ -90,7 +88,28 @@ namespace GK_Proj1
                 this.Invalidate(); // Odœwie¿enie obszaru rysowania
             }
         }
-           
+        private void CreatePolygon(MouseEventArgs e)
+        {
+            Polygon newPolygon = new Polygon(currPoints, currLines);
+
+            // Rysuj nowy poligon na tempBitmap
+            using (Graphics g = Graphics.FromImage(tempBitmap))
+            {
+                foreach (var rect in currPoints)
+                {
+                    g.FillRectangle(Brushes.Black, rect.Item2);
+                }
+                foreach (var line in currLines)
+                {
+                    g.DrawLine(Pens.Black, line.start, line.end);
+                }
+            }
+
+            isDrawingLine = false;
+            polygons.Add(newPolygon);
+            currPoints.Clear();
+            currLines.Clear();
+        }
         
 
         private void bitMap_Paint(object sender, PaintEventArgs e)
