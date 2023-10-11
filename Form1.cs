@@ -1,33 +1,23 @@
 namespace GK_Proj1
 {
-    public partial class Form : System.Windows.Forms.Form
+    public partial class Form1 : Form
     {
         private Bitmap tempBitmap;
         private List<Polygon> polygons = new List<Polygon>();
-        private List<Tuple<Point,Rectangle>> currPoints = new List<Tuple<Point, Rectangle>>();
+        private List<Tuple<Point, Rectangle>> currPoints = new List<Tuple<Point, Rectangle>>();
         private List<Line> currLines = new List<Line>();
         private bool isDrawingLine = false;
         private Point PolygonStart;
         private Point lineStartPoint;
         private Point lineEndPoint;
-        public Form()
+        public Form1()
         {
-            this.DoubleBuffered = true;
-            this.Size = new Size(800, 600);
-            this.Paint += bitMap_Paint;
-            this.MouseClick += bitMap_MouseClick;
-            this.MouseMove += bitMap_MouseMove;
-            this.BackColor = Color.White;
-            tempBitmap = new Bitmap(800, 600);
+            InitializeComponent();
+            tempBitmap = new Bitmap(3840, 2160);
             using (Graphics g = Graphics.FromImage(tempBitmap))
             {
                 g.Clear(Color.Transparent); // Inicjalizacja t³a bitmapy
             }
-        }
-
-        private void bitMap_MouseDown(object sender, MouseEventArgs e)
-        {
-
         }
 
         private void bitMap_MouseClick(object sender, MouseEventArgs e)
@@ -51,15 +41,15 @@ namespace GK_Proj1
                 else
                 {
                     // Klikniêcie lewym przyciskiem myszy po rozpoczêciu rysowania linii - dodaj wierzcho³ek linii
-                    
-                    foreach(var rect in currPoints)
+
+                    foreach (var rect in currPoints)
                     {
                         if (Math.Abs(e.Location.X - PolygonStart.X) <= 5 && Math.Abs(e.Location.Y - PolygonStart.Y) <= 5)
                         {
                             CreatePolygon(e);
                         }
 
-                        if (Math.Abs(e.Location.X - rect.Item1.X) <= 5 && Math.Abs(e.Location.Y - rect.Item1.Y) <=5)
+                        if (Math.Abs(e.Location.X - rect.Item1.X) <= 5 && Math.Abs(e.Location.Y - rect.Item1.Y) <= 5)
                         {
                             Line Line = new Line(lineStartPoint, rect.Item1);
                             currLines.Add(Line);
@@ -85,7 +75,7 @@ namespace GK_Proj1
                     // Co jesli naciskam na juz istniejay wierzcholek w obecnym wielokacie
                 }
 
-                this.Invalidate(); // Odœwie¿enie obszaru rysowania
+                bitMap.Invalidate(); // Odœwie¿enie obszaru rysowania
             }
         }
         private void CreatePolygon(MouseEventArgs e)
@@ -110,17 +100,27 @@ namespace GK_Proj1
             currPoints.Clear();
             currLines.Clear();
         }
-        
+
+        private void bitMap_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isDrawingLine)
+            {
+                // Aktualizuj pozycjê koñcow¹ linii podczas przesuwania myszki
+                lineEndPoint = e.Location;
+                bitMap.Invalidate(); // Odœwie¿enie obszaru rysowania
+
+            }
+        }
 
         private void bitMap_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.DrawImage(tempBitmap, 0, 0);
-            
+
             foreach (var rect in currPoints)
             {
                 e.Graphics.FillRectangle(Brushes.Black, rect.Item2);
             }
-            foreach(var line in currLines)
+            foreach (var line in currLines)
             {
                 e.Graphics.DrawLine(Pens.Black, line.start, line.end);
             }
@@ -128,23 +128,12 @@ namespace GK_Proj1
             {
                 // Rysuj liniê od  prostok¹ta do pozycji myszki
                 e.Graphics.DrawLine(Pens.Black, lineStartPoint, lineEndPoint);
-                
-            }
-            this.Invalidate();
-        }
-
-        private void bitMap_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (isDrawingLine)
-            {
-                // Aktualizuj pozycjê koñcow¹ linii podczas przesuwania myszki
-               lineEndPoint = e.Location;
-               this.Invalidate(); // Odœwie¿enie obszaru rysowania
 
             }
+            bitMap.Invalidate();
         }
 
-        private void bitMap_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        private void groupBox1_Enter(object sender, EventArgs e)
         {
 
         }

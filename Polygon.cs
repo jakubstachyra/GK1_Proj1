@@ -8,9 +8,9 @@ namespace GK_Proj1
 {
     internal class Line
     {
-       public Point start { get; set; }
-       public Point end{ get; set; }
-        
+        public Point start { get; set; }
+        public Point end { get; set; }
+
         public Line(Point start, Point end)
         {
             this.start = start;
@@ -28,5 +28,4 @@ namespace GK_Proj1
             this.lines = lines;
         }
     }
-
 }
