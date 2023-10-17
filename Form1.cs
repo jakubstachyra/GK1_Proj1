@@ -2,12 +2,19 @@ namespace GK_Proj1
 {
     public partial class Form1 : Form
     {
+
         private Bitmap tempBitmap;
         private List<Polygon> polygons = new List<Polygon>();
-        private List<Tuple<Point, Rectangle>> currPoints = new List<Tuple<Point, Rectangle>>();
-        private List<Line> currLines = new List<Line>();
+        private List<Vertex> currPoints = new List<Vertex>();
+        private int eps = 5;
+        private int offset = 5;
+        private int vertexSize = 10;
         private bool isDrawingLine = false;
-        private Point PolygonStart;
+        private Vertex? prevPoint = null;
+        private Vertex? editingVertex = null;
+        private bool isEditing = false;
+        
+        private Vertex PolygonStart;
         private Point lineStartPoint;
         private Point lineEndPoint;
         public Form1()
@@ -27,15 +34,11 @@ namespace GK_Proj1
                 if (!isDrawingLine)
                 {
                     // Klikniêcie lewym przyciskiem myszy - dodaj prostok¹t
-                    if (currPoints.Count == 0)
-                    {
-                        PolygonStart = e.Location;
-                    }
-                    Point point = new Point(e.X, e.Y);
-                    lineStartPoint = point;
-                    Rectangle newRect = new Rectangle(e.X - 3, e.Y - 3, 8, 8);
-                    Tuple<Point, Rectangle> newPoint = new Tuple<Point, Rectangle>(point, newRect);
-                    currPoints.Add(newPoint);
+                    var point = new Point(e.X - offset, e.Y - offset);
+                    PolygonStart = new Vertex(point, prevPoint, null);
+                    prevPoint = PolygonStart;
+                    currPoints.Add(PolygonStart);
+                    lineStartPoint = PolygonStart.point;
                     isDrawingLine = true;
                 }
                 else
@@ -44,35 +47,33 @@ namespace GK_Proj1
 
                     foreach (var rect in currPoints)
                     {
-                        if (Math.Abs(e.Location.X - PolygonStart.X) <= 5 && Math.Abs(e.Location.Y - PolygonStart.Y) <= 5)
+                        if (Math.Abs(e.Location.X - PolygonStart.point.X) <= eps && Math.Abs(e.Location.Y - PolygonStart.point.Y) <= eps)
                         {
+                            PolygonStart.prev = prevPoint;
+                            if (prevPoint != null)
+                            {
+                                prevPoint.next = PolygonStart;
+                            }
                             CreatePolygon(e);
                         }
+                        
 
-                        if (Math.Abs(e.Location.X - rect.Item1.X) <= 5 && Math.Abs(e.Location.Y - rect.Item1.Y) <= 5)
+                        if (Math.Abs(e.Location.X - rect.point.X) <= eps && Math.Abs(e.Location.Y - rect.point.Y) <= eps)
                         {
-                            Line Line = new Line(lineStartPoint, rect.Item1);
-                            currLines.Add(Line);
-                            lineStartPoint = rect.Item1;
                             return;
                         }
                     }
 
                     lineEndPoint = e.Location;
-                    Rectangle newRect = new Rectangle(e.X - 3, e.Y - 3, 8, 8);
-                    Point point = new Point(e.X, e.Y);
-                    Tuple<Point, Rectangle> newPoint = new Tuple<Point, Rectangle>(point, newRect);
-                    currPoints.Add(newPoint);
-                    Line newLine = new Line(lineStartPoint, lineEndPoint);
-                    currLines.Add(newLine);
-                    lineStartPoint = point;
-
-                    if (Math.Abs(e.Location.X - PolygonStart.X) <= 5 && Math.Abs(e.Location.Y - PolygonStart.Y) <= 5)
+                    Point point = new Point(e.X - offset, e.Y - offset);
+                    Vertex newPoint = new Vertex(point, prevPoint, null);
+                    if (prevPoint != null)
                     {
-                        CreatePolygon(e);
-
+                        prevPoint.next = newPoint;
                     }
-                    // Co jesli naciskam na juz istniejay wierzcholek w obecnym wielokacie
+                    prevPoint = newPoint;
+                    currPoints.Add(newPoint);
+                    lineStartPoint = point;
                 }
 
                 bitMap.Invalidate(); // Odœwie¿enie obszaru rysowania
@@ -80,25 +81,12 @@ namespace GK_Proj1
         }
         private void CreatePolygon(MouseEventArgs e)
         {
-            Polygon newPolygon = new Polygon(currPoints, currLines);
-
-            // Rysuj nowy poligon na tempBitmap
-            using (Graphics g = Graphics.FromImage(tempBitmap))
-            {
-                foreach (var rect in currPoints)
-                {
-                    g.FillRectangle(Brushes.Black, rect.Item2);
-                }
-                foreach (var line in currLines)
-                {
-                    g.DrawLine(Pens.Black, line.start, line.end);
-                }
-            }
+            Polygon newPolygon = new Polygon(currPoints);
+            currPoints.Last().next = PolygonStart;
 
             isDrawingLine = false;
             polygons.Add(newPolygon);
             currPoints.Clear();
-            currLines.Clear();
         }
 
         private void bitMap_MouseMove(object sender, MouseEventArgs e)
@@ -110,19 +98,34 @@ namespace GK_Proj1
                 bitMap.Invalidate(); // Odœwie¿enie obszaru rysowania
 
             }
+            if (isEditing)
+            {
+                if (editingVertex != null)
+                {
+                    editingVertex.point = e.Location;
+                }
+                bitMap.Invalidate();
+            }
+                
         }
-
+        
         private void bitMap_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.DrawImage(tempBitmap, 0, 0);
-
-            foreach (var rect in currPoints)
+            using (Graphics g = Graphics.FromImage(tempBitmap))
             {
-                e.Graphics.FillRectangle(Brushes.Black, rect.Item2);
+                g.Clear(Color.Transparent); // Inicjalizacja t³a bitmapy
             }
-            foreach (var line in currLines)
+            Functions.DrawPolygon(e, polygons, vertexSize, offset);
+
+            foreach (var vertex in currPoints)
             {
-                e.Graphics.DrawLine(Pens.Black, line.start, line.end);
+                e.Graphics.FillEllipse(Brushes.Black, vertex.point.X - offset, vertex.point.Y - offset, vertexSize, vertexSize);
+                if (vertex.next != null)
+                {
+                    e.Graphics.DrawLine(Pens.Black, vertex.point, vertex.next.point);
+                }
+
             }
             if (isDrawingLine)
             {
@@ -137,5 +140,89 @@ namespace GK_Proj1
         {
 
         }
+
+        private void bitMap_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                foreach (var polygon in polygons)
+                {
+                    foreach (var vertex in polygon.vertices)
+                    {
+
+                        if (Math.Abs(e.Location.X - vertex.point.X) <= 2 * eps && Math.Abs(e.Location.Y - vertex.point.Y) <= 2 * eps)
+                        {
+                            if (vertex.prev != null && vertex.next != null)
+                            {
+                                vertex.prev.next = vertex.next;
+                                vertex.next.prev = vertex.prev;
+                            }
+                            if (polygon.vertices.Count > 3)
+                            {
+                                polygon.vertices.Remove(vertex);
+                            }
+                            else
+                            {
+                                polygons.Remove(polygon);
+                            }
+                            bitMap.Invalidate();
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void bitMap_MouseDown(object sender, MouseEventArgs e)
+        {
+            if(e.Button == MouseButtons.Right) 
+            {
+                foreach (var polygon in polygons)
+                {
+                    foreach (var vertex in polygon.vertices)
+                    {
+
+                        if (Math.Abs(e.Location.X - vertex.point.X) <= 2 * eps && Math.Abs(e.Location.Y - vertex.point.Y) <= 2 * eps)
+                        {
+                            isEditing = true;
+                            editingVertex = vertex;
+                            return;
+                        }
+                        if (vertex.next != null && vertex.prev !=null)
+                        {
+                            if (Functions.isPointOnLine(vertex.point, vertex.next.point, e.Location, eps))
+                            {
+                                var newVertex = new Vertex(Functions.FindCenterOfLine(vertex.point, vertex.next.point), vertex, vertex.next);
+                                vertex.next.prev = newVertex;
+                                vertex.next = newVertex;
+                                
+                                polygon.vertices.Insert(polygon.vertices.IndexOf(vertex) + 1, newVertex);
+                                
+                                return;
+                            }
+                        }
+                        
+                    }
+                }
+            }
+        }
+
+        private void bitMap_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                isEditing = false;
+            }
+        }
+
+        private void groupBox2_Enter(object sender, EventArgs e)
+        {
+
+        }
+    }
+    enum Mode
+    {
+        Draw,
+        Edit,
     }
 }
