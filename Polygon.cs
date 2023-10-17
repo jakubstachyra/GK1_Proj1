@@ -6,27 +6,24 @@ using System.Threading.Tasks;
 
 namespace GK_Proj1
 {
-    internal class Line
+    internal class Vertex
     {
-       public Point start { get; set; }
-       public Point end{ get; set; }
-        
-        public Line(Point start, Point end)
+        public Point point { get; set; }
+        public Vertex? next { get; set; }
+        public Vertex? prev { get; set; }
+        public Vertex(Point point, Vertex? prev, Vertex? next)
         {
-            this.start = start;
-            this.end = end;
+            this.point = point;
+            this.next = next;
+            this.prev = prev;
         }
-
     }
     internal class Polygon
     {
-        public List<Tuple<Point, Rectangle>> vertices = new List<Tuple<Point, Rectangle>>();
-        public List<Line> lines = new List<Line>();
-        public Polygon(List<Tuple<Point, Rectangle>> points, List<Line> lines)
+        public List<Vertex> vertices;
+        public Polygon(List<Vertex> points)
         {
-            this.vertices = points;
-            this.lines = lines;
+            this.vertices = new List<Vertex>(points);
         }
     }
-
 }

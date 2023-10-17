@@ -1,0 +1,17 @@
+D:\Kuba\GK_Proj1\GK_Proj1\obj\Debug\net7.0-windows\GK_Proj1.csproj.AssemblyReference.cache
+D:\Kuba\GK_Proj1\GK_Proj1\obj\Debug\net7.0-windows\GK_Proj1.Form1.resources
+D:\Kuba\GK_Proj1\GK_Proj1\obj\Debug\net7.0-windows\GK_Proj1.csproj.GenerateResource.cache
+D:\Kuba\GK_Proj1\GK_Proj1\obj\Debug\net7.0-windows\GK_Proj1.GeneratedMSBuildEditorConfig.editorconfig
+D:\Kuba\GK_Proj1\GK_Proj1\obj\Debug\net7.0-windows\GK_Proj1.AssemblyInfoInputs.cache
+D:\Kuba\GK_Proj1\GK_Proj1\obj\Debug\net7.0-windows\GK_Proj1.AssemblyInfo.cs
+D:\Kuba\GK_Proj1\GK_Proj1\obj\Debug\net7.0-windows\GK_Proj1.csproj.CoreCompileInputs.cache
+D:\Kuba\GK_Proj1\GK_Proj1\bin\Debug\net7.0-windows\GK_Proj1.exe
+D:\Kuba\GK_Proj1\GK_Proj1\bin\Debug\net7.0-windows\GK_Proj1.deps.json
+D:\Kuba\GK_Proj1\GK_Proj1\bin\Debug\net7.0-windows\GK_Proj1.runtimeconfig.json
+D:\Kuba\GK_Proj1\GK_Proj1\bin\Debug\net7.0-windows\GK_Proj1.dll
+D:\Kuba\GK_Proj1\GK_Proj1\bin\Debug\net7.0-windows\GK_Proj1.pdb
+D:\Kuba\GK_Proj1\GK_Proj1\obj\Debug\net7.0-windows\GK_Proj1.dll
+D:\Kuba\GK_Proj1\GK_Proj1\obj\Debug\net7.0-windows\refint\GK_Proj1.dll
+D:\Kuba\GK_Proj1\GK_Proj1\obj\Debug\net7.0-windows\GK_Proj1.pdb
+D:\Kuba\GK_Proj1\GK_Proj1\obj\Debug\net7.0-windows\GK_Proj1.genruntimeconfig.cache
+D:\Kuba\GK_Proj1\GK_Proj1\obj\Debug\net7.0-windows\ref\GK_Proj1.dll
