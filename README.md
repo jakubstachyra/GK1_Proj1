@@ -2,7 +2,7 @@
 
 Edytor wielokątów - podstawowa specyfikacja:
 
-    Możliwość dodawania nowego wielokąta, usuwania oraz edycji
+Możliwość dodawania nowego wielokąta, usuwania oraz edycji
     Przy edycji:
         przesuwanie wierzchołka
         usuwanie wierzchołka
