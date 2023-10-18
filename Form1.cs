@@ -13,12 +13,13 @@ namespace GK_Proj1
         private bool isEditing = false;
         private bool isEditingLine = false;
         private bool isMovingPolygon = false;
-        private Polygon movingPolygon = null;
+       
+        private Polygon? movingPolygon = null;
         private Vertex? prevPoint = null;
         private Vertex? editingVertex = null;
-        private Point prevMousePosition;
-        
         private Vertex PolygonStart;
+        
+        private Point prevMousePosition;
         private Point lineStartPoint;
         private Point lineEndPoint;
         public Form1()
@@ -36,7 +37,7 @@ namespace GK_Proj1
             if (e.Button == MouseButtons.Left)
             {
 
-                switch(mode)
+                switch (mode)
                 {
                     case Mode.Draw:
                         if (!isDrawingLine)
@@ -83,39 +84,58 @@ namespace GK_Proj1
                             currPoints.Add(newPoint);
                             lineStartPoint = point;
                         }
-                     break;
-                     case Mode.Delete:
-                            foreach (var polygon in polygons)
+                        break;
+                    case Mode.Delete:    
+                        foreach (var polygon in polygons)
+                        {
+                            if (Functions.IsPointInsidePolygon(polygon, e))
                             {
-                                foreach (var vertex in polygon.vertices)
-                                {
+                                polygons.Remove(polygon);
+                                break;
 
-                                    if (Math.Abs(e.Location.X - vertex.point.X) <= 2 * eps && Math.Abs(e.Location.Y - vertex.point.Y) <= 2 * eps)
+                            }
+                        }
+                    break;
+
+                }
+
+            }
+            if (e.Button == MouseButtons.Right)
+            {
+                switch (mode)
+                {
+                    case Mode.Delete:
+                        foreach (var polygon in polygons)
+                        {
+                            foreach (var vertex in polygon.vertices)
+                            {
+
+                                if (Math.Abs(e.Location.X - vertex.point.X) <= 2 * eps && Math.Abs(e.Location.Y - vertex.point.Y) <= 2 * eps)
+                                {
+                                    if (vertex.prev != null && vertex.next != null)
                                     {
-                                        if (vertex.prev != null && vertex.next != null)
-                                        {
-                                            vertex.prev.next = vertex.next;
-                                            vertex.next.prev = vertex.prev;
-                                        }
-                                        if (polygon.vertices.Count > 3)
-                                        {
-                                            polygon.vertices.Remove(vertex);
-                                        }
-                                        else
-                                        {
-                                            polygons.Remove(polygon);
-                                        }
-                                        bitMap.Invalidate();
-                                        return;
+                                        vertex.prev.next = vertex.next;
+                                        vertex.next.prev = vertex.prev;
                                     }
+                                    if (polygon.vertices.Count > 3)
+                                    {
+                                        polygon.vertices.Remove(vertex);
+                                    }
+                                    else
+                                    {
+                                        polygons.Remove(polygon);
+                                    }
+                                    bitMap.Invalidate();
+                                    return;
                                 }
                             }
-                    break;
-                    
+
+                        }
+                        break;
                 }
-  
-                bitMap.Invalidate(); // Odœwie¿enie obszaru rysowania
+
             }
+                bitMap.Invalidate(); // Odœwie¿enie obszaru rysowania
         }
         private void CreatePolygon(MouseEventArgs e)
         {
@@ -139,7 +159,6 @@ namespace GK_Proj1
                 if (editingVertex != null)
                 {
                     Functions.MoveVertexByMouse(editingVertex, e, prevMousePosition);
-                    
                 }
             }
             if(isEditingLine)
