@@ -97,21 +97,63 @@ namespace GK_Proj1
 
             return Math.Sqrt(dx * dx + dy * dy);
         }
-        //public static Point GetCloserPoint(Point P1, Point P2, Point P)
-        //{
-        //    double distanceTo1 = CalculateDistance(P1, P);
-        //    double distanceTo2 = CalculateDistance(P, P2);
+        public static bool IsPointInsidePolygon(Polygon polygon, MouseEventArgs e)
+        {
+            Point point = e.Location;
+            int intersectCount = 0;
 
-        //    if (distanceTo1 < distanceTo2)
-        //    {
-        //        return P1;
-        //    }
-        //    else
-        //    {
-        //        return P2;
-        //    }
-        //}
-       
+            for (int i = 0; i < polygon.vertices.Count; i++)
+            {
+                Point vertex1 = polygon.vertices[i].point;
+                Point vertex2 = polygon.vertices[(i + 1) % polygon.vertices.Count].point;
+
+                if (IsPointOnSegment(vertex1, vertex2, point))
+                {
+                    return true; // Jeśli punkt znajduje się na krawędzi wielokąta, uważamy go za wewnątrz
+                }
+
+                if ((vertex1.Y < point.Y && vertex2.Y >= point.Y || vertex2.Y < point.Y && vertex1.Y >= point.Y) &&
+                    (vertex1.X + (point.Y - vertex1.Y) / (vertex2.Y - vertex1.Y) * (vertex2.X - vertex1.X) < point.X))
+                {
+                    intersectCount++;
+                }
+            }
+
+            return intersectCount % 2 == 1;
+        }
+        private static bool IsPointOnSegment(Point p1, Point p2, Point point)
+        {
+            return (point.X <= Math.Max(p1.X, p2.X) && point.X >= Math.Min(p1.X, p2.X) &&
+                    point.Y <= Math.Max(p1.Y, p2.Y) && point.Y >= Math.Min(p1.Y, p2.Y));
+        }
+        public static void MovePolygonByMouse(Polygon polygon, MouseEventArgs e, Point prevMousePosition)
+        {
+            foreach (var vertex in polygon.vertices)
+            {
+                MoveVertexByMouse(vertex, e, prevMousePosition);
+            }
+        }
+        public static void MoveLineByMouse(Vertex? editingVertex, MouseEventArgs e, Point prevMousePosition)
+        {
+            if (editingVertex != null && editingVertex.next != null)
+            {
+                int dx = e.Location.X - prevMousePosition.X;
+                int dy = e.Location.Y - prevMousePosition.Y;
+
+                // Aktualizuj pozycje wierzchołków linii wraz z linią
+                editingVertex.point = new Point(editingVertex.point.X + dx, editingVertex.point.Y + dy);
+                editingVertex.next.point = new Point(editingVertex.next.point.X + dx, editingVertex.next.point.Y + dy);
+            }
+        }
+        public static void MoveVertexByMouse(Vertex vertex, MouseEventArgs e, Point prevMousePosition)
+        {
+            int dx = e.Location.X - prevMousePosition.X;
+            int dy = e.Location.Y - prevMousePosition.Y;
+
+            // Aktualizuj pozycję wierzchołka
+            vertex.point = new Point(vertex.point.X + dx, vertex.point.Y + dy);
+        }
 
     }
 }
+

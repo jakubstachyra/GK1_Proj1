@@ -33,8 +33,12 @@
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.DeleteButton = new System.Windows.Forms.RadioButton();
+            this.EditButton = new System.Windows.Forms.RadioButton();
+            this.DrawButton = new System.Windows.Forms.RadioButton();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.bitMap = new System.Windows.Forms.PictureBox();
+            this.MoveButton = new System.Windows.Forms.RadioButton();
             this.panel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -91,6 +95,10 @@
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.MoveButton);
+            this.groupBox2.Controls.Add(this.DeleteButton);
+            this.groupBox2.Controls.Add(this.EditButton);
+            this.groupBox2.Controls.Add(this.DrawButton);
             this.groupBox2.Controls.Add(this.textBox1);
             this.groupBox2.Location = new System.Drawing.Point(6, 6);
             this.groupBox2.MinimumSize = new System.Drawing.Size(176, 338);
@@ -99,7 +107,41 @@
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Mode";
-            this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
+            // 
+            // DeleteButton
+            // 
+            this.DeleteButton.AutoSize = true;
+            this.DeleteButton.Location = new System.Drawing.Point(16, 72);
+            this.DeleteButton.Name = "DeleteButton";
+            this.DeleteButton.Size = new System.Drawing.Size(58, 19);
+            this.DeleteButton.TabIndex = 3;
+            this.DeleteButton.Text = "Delete";
+            this.DeleteButton.UseVisualStyleBackColor = true;
+            this.DeleteButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DeleteButton_MouseClick);
+            // 
+            // EditButton
+            // 
+            this.EditButton.AutoSize = true;
+            this.EditButton.Location = new System.Drawing.Point(16, 47);
+            this.EditButton.Name = "EditButton";
+            this.EditButton.Size = new System.Drawing.Size(45, 19);
+            this.EditButton.TabIndex = 2;
+            this.EditButton.Text = "Edit";
+            this.EditButton.UseVisualStyleBackColor = true;
+            this.EditButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.EditButton_MouseClick);
+            // 
+            // DrawButton
+            // 
+            this.DrawButton.AutoSize = true;
+            this.DrawButton.Checked = true;
+            this.DrawButton.Location = new System.Drawing.Point(16, 22);
+            this.DrawButton.Name = "DrawButton";
+            this.DrawButton.Size = new System.Drawing.Size(52, 19);
+            this.DrawButton.TabIndex = 1;
+            this.DrawButton.TabStop = true;
+            this.DrawButton.Text = "Draw";
+            this.DrawButton.UseVisualStyleBackColor = true;
+            this.DrawButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DrawButton_MouseClick);
             // 
             // textBox1
             // 
@@ -124,6 +166,18 @@
             this.bitMap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.bitMap_MouseDown);
             this.bitMap.MouseMove += new System.Windows.Forms.MouseEventHandler(this.bitMap_MouseMove);
             this.bitMap.MouseUp += new System.Windows.Forms.MouseEventHandler(this.bitMap_MouseUp);
+            // 
+            // MoveButton
+            // 
+            this.MoveButton.AutoSize = true;
+            this.MoveButton.Location = new System.Drawing.Point(16, 97);
+            this.MoveButton.Name = "MoveButton";
+            this.MoveButton.Size = new System.Drawing.Size(55, 19);
+            this.MoveButton.TabIndex = 4;
+            this.MoveButton.TabStop = true;
+            this.MoveButton.Text = "Move";
+            this.MoveButton.UseVisualStyleBackColor = true;
+            this.MoveButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MoveButton_MouseClick);
             // 
             // Form1
             // 
@@ -153,5 +207,9 @@
         private GroupBox groupBox2;
         private TextBox textBox1;
         private PictureBox bitMap;
+        private RadioButton EditButton;
+        private RadioButton DrawButton;
+        private RadioButton DeleteButton;
+        private RadioButton MoveButton;
     }
 }
