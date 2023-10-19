@@ -11,11 +11,19 @@ namespace GK_Proj1
         public Point point { get; set; }
         public Vertex? next { get; set; }
         public Vertex? prev { get; set; }
+        public Relation relation { get; set; }
         public Vertex(Point point, Vertex? prev, Vertex? next)
         {
             this.point = point;
             this.next = next;
             this.prev = prev;
+        }
+        public Vertex(Point point, Vertex? prev, Vertex? next, Relation relation)
+        {
+            this.point = point;
+            this.next = next;
+            this.prev = prev;
+            this.relation = relation;
         }
     }
     internal class Polygon
@@ -26,4 +34,9 @@ namespace GK_Proj1
             this.vertices = new List<Vertex>(points);
         }
     }
+    enum Relation {
+        Horizontal,
+        Vertical,
+    }
+
 }

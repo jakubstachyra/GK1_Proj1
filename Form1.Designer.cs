@@ -35,12 +35,12 @@
             this.EditButton = new System.Windows.Forms.RadioButton();
             this.DrawButton = new System.Windows.Forms.RadioButton();
             this.OffsetGroupBox = new System.Windows.Forms.GroupBox();
+            this.OffsetCheckBox = new System.Windows.Forms.CheckBox();
             this.OffsetBar = new System.Windows.Forms.TrackBar();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.bitMap = new System.Windows.Forms.PictureBox();
-            this.OffsetCheckBox = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             this.ModeGroupBox.SuspendLayout();
             this.OffsetGroupBox.SuspendLayout();
@@ -137,12 +137,27 @@
             this.OffsetGroupBox.TabStop = false;
             this.OffsetGroupBox.Text = "Offset";
             // 
+            // OffsetCheckBox
+            // 
+            this.OffsetCheckBox.AutoSize = true;
+            this.OffsetCheckBox.Location = new System.Drawing.Point(16, 22);
+            this.OffsetCheckBox.Name = "OffsetCheckBox";
+            this.OffsetCheckBox.Size = new System.Drawing.Size(58, 19);
+            this.OffsetCheckBox.TabIndex = 5;
+            this.OffsetCheckBox.Text = "Offset";
+            this.OffsetCheckBox.UseVisualStyleBackColor = true;
+            this.OffsetCheckBox.CheckedChanged += new System.EventHandler(this.OffsetCheckBox_CheckedChanged);
+            // 
             // OffsetBar
             // 
-            this.OffsetBar.Location = new System.Drawing.Point(16, 59);
+            this.OffsetBar.LargeChange = 10;
+            this.OffsetBar.Location = new System.Drawing.Point(16, 47);
+            this.OffsetBar.Maximum = 100;
+            this.OffsetBar.Minimum = 10;
             this.OffsetBar.Name = "OffsetBar";
             this.OffsetBar.Size = new System.Drawing.Size(147, 45);
             this.OffsetBar.TabIndex = 0;
+            this.OffsetBar.Value = 30;
             this.OffsetBar.Scroll += new System.EventHandler(this.OffsetBar_Scroll);
             // 
             // groupBox1
@@ -195,17 +210,6 @@
             this.bitMap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.bitMap_MouseDown);
             this.bitMap.MouseMove += new System.Windows.Forms.MouseEventHandler(this.bitMap_MouseMove);
             this.bitMap.MouseUp += new System.Windows.Forms.MouseEventHandler(this.bitMap_MouseUp);
-            // 
-            // OffsetCheckBox
-            // 
-            this.OffsetCheckBox.AutoSize = true;
-            this.OffsetCheckBox.Location = new System.Drawing.Point(16, 22);
-            this.OffsetCheckBox.Name = "OffsetCheckBox";
-            this.OffsetCheckBox.Size = new System.Drawing.Size(58, 19);
-            this.OffsetCheckBox.TabIndex = 5;
-            this.OffsetCheckBox.Text = "Offset";
-            this.OffsetCheckBox.UseVisualStyleBackColor = true;
-            this.OffsetCheckBox.CheckedChanged += new System.EventHandler(this.OffsetCheckBox_CheckedChanged);
             // 
             // Form1
             // 

@@ -189,15 +189,18 @@ namespace GK_Proj1
             {
                 foreach (var polygon in polygons)
                 {
-                    Polygon PolygonOffset = Functions.OffsetPolygon(polygon, offset);
-                    foreach (var vertex in PolygonOffset.vertices)
-                    {
-                        //e.Graphics.FillEllipse(Brushes.Black, vertex.point.X - mouseOffset, vertex.point.Y - mouseOffset, vertexSize, vertexSize);
-                        if (vertex.next != null)
+                    Polygon PolygonsOffset = Functions.OffsetPolygon(polygon, offset);
+                   
+                        foreach (var vertex in PolygonsOffset.vertices)
                         {
-                            e.Graphics.DrawLine(Pens.GreenYellow, vertex.point, vertex.next.point);
+                            e.Graphics.FillEllipse(Brushes.Black, vertex.point.X - mouseOffset, vertex.point.Y - mouseOffset, vertexSize, vertexSize);
+                            if (vertex.next != null)
+                            {
+                                e.Graphics.DrawLine(Pens.Red, vertex.point, vertex.next.point);
+                            }
+
                         }
-                    }
+                   
                 }
             }
 
@@ -309,28 +312,37 @@ namespace GK_Proj1
             }
         }
         private void DrawButton_MouseClick(object sender, MouseEventArgs e)
-        {
+        {   
             mode = Mode.Draw;
         }
 
         private void EditButton_MouseClick(object sender, MouseEventArgs e)
         {
+            isDrawingLine = false;
+            currPoints.Clear();
             mode = Mode.Edit;
         }
 
         private void DeleteButton_MouseClick(object sender, MouseEventArgs e)
         {
+            isDrawingLine = false;
+            currPoints.Clear();
             mode = Mode.Delete;
         }
 
         private void MoveButton_MouseClick(object sender, MouseEventArgs e)
         {
+            isDrawingLine = false;
+            currPoints.Clear();
             mode = Mode.Move;
         }
 
         private void OffsetBar_Scroll(object sender, EventArgs e)
         {
-
+            offset = OffsetBar.Value;
+            // Tutaj mo¿esz zaktualizowaæ wartoœæ offsetu w swoim programie
+            // Mo¿esz tak¿e wyœwietlaæ tê wartoœæ w jakimœ polu tekstowym lub etykiecie, jeœli jest to konieczne.
+            OffsetBar.Text = "Offset: " + offset.ToString();
         }
         private void OffsetCheckBox_CheckedChanged(object sender, EventArgs e)
         {
