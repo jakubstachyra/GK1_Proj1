@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,14 +50,14 @@ namespace GK_Proj1
             usercontrol.BackgroundImage = canvas;
 
         }
-        public static void DrawPolygon(PaintEventArgs e, List<Polygon> polygons, int vertexSize, int offset)
+        public static void DrawPolygon(PaintEventArgs e, List<Polygon> polygons, int vertexSize, int mouseOffset, bool isOffset)
         {
             
             foreach (var polygon in polygons)
             {
                 foreach (var vertex in polygon.vertices)
                 {
-                    e.Graphics.FillEllipse(Brushes.Black,  vertex.point.X - offset, vertex.point.Y - offset, vertexSize ,vertexSize);
+                    e.Graphics.FillEllipse(Brushes.Black,  vertex.point.X - mouseOffset, vertex.point.Y - mouseOffset, vertexSize ,vertexSize);
                     if (vertex.next != null)
                     {
                         e.Graphics.DrawLine(Pens.Black, vertex.point, vertex.next.point);
@@ -126,11 +127,14 @@ namespace GK_Proj1
             return (point.X <= Math.Max(p1.X, p2.X) && point.X >= Math.Min(p1.X, p2.X) &&
                     point.Y <= Math.Max(p1.Y, p2.Y) && point.Y >= Math.Min(p1.Y, p2.Y));
         }
-        public static void MovePolygonByMouse(Polygon polygon, MouseEventArgs e, Point prevMousePosition)
+        public static void MovePolygonByMouse(Polygon? polygon, MouseEventArgs e, Point prevMousePosition)
         {
-            foreach (var vertex in polygon.vertices)
+            if(polygon != null)
             {
-                MoveVertexByMouse(vertex, e, prevMousePosition);
+                foreach (var vertex in polygon.vertices)
+                {
+                    MoveVertexByMouse(vertex, e, prevMousePosition);
+                }
             }
         }
         public static void MoveLineByMouse(Vertex? editingVertex, MouseEventArgs e, Point prevMousePosition)
@@ -153,7 +157,68 @@ namespace GK_Proj1
             // Aktualizuj pozycję wierzchołka
             vertex.point = new Point(vertex.point.X + dx, vertex.point.Y + dy);
         }
+        public static Polygon OffsetPolygon(Polygon originalPolygon, float offsetDistance)
+        {
+            Polygon offsetPolygon = new Polygon(new List<Vertex>());
 
+            for (int i = 0; i < originalPolygon.vertices.Count; i++)
+            {
+                Vertex currentVertex = originalPolygon.vertices[i];
+                Vertex prevVertex = originalPolygon.vertices[(i - 1 + originalPolygon.vertices.Count) % originalPolygon.vertices.Count];
+                Vertex nextVertex = originalPolygon.vertices[(i + 1) % originalPolygon.vertices.Count];
+
+                Vector2 edge = new Vector2(nextVertex.point.X - currentVertex.point.X, nextVertex.point.Y - currentVertex.point.Y);
+                Vector2 prevEdge = new Vector2(currentVertex.point.X - prevVertex.point.X, currentVertex.point.Y - prevVertex.point.Y);
+
+                Vector2 edgeNormal = new Vector2(-edge.Y, edge.X);
+                Vector2 prevEdgeNormal = new Vector2(-prevEdge.Y, prevEdge.X);
+                edgeNormal = Vector2.Normalize(edgeNormal);
+                prevEdgeNormal = Vector2.Normalize(prevEdgeNormal);
+
+                Vector2 offsetVector = edgeNormal + prevEdgeNormal;
+                offsetVector = Vector2.Normalize(offsetVector);
+
+                Point offsetPoint = new Point(
+                    (int)(currentVertex.point.X + offsetVector.X * offsetDistance),
+                    (int)(currentVertex.point.Y + offsetVector.Y * offsetDistance));
+
+                // Sprawdzamy, czy przesunięty wierzchołek jest częścią otoczki
+                bool isConvexHullVertex = IsConvexHullVertex(currentVertex, originalPolygon.vertices);
+
+                if (isConvexHullVertex)
+                {
+                    offsetPolygon.vertices.Add(new Vertex(offsetPoint, null, null));
+                }
+                else
+                {
+                    offsetPolygon.vertices.Add(currentVertex);
+                }
+            }
+
+            for (int i = 0; i < offsetPolygon.vertices.Count; i++)
+            {
+                int prevIndex = (i - 1 + offsetPolygon.vertices.Count) % offsetPolygon.vertices.Count;
+                int nextIndex = (i + 1) % offsetPolygon.vertices.Count;
+
+                offsetPolygon.vertices[i].prev = offsetPolygon.vertices[prevIndex];
+                offsetPolygon.vertices[i].next = offsetPolygon.vertices[nextIndex];
+            }
+
+            return offsetPolygon;
+        }
+
+        public static bool IsConvexHullVertex(Vertex vertex, List<Vertex> convexHull)
+        {
+            // Sprawdzamy, czy wierzchołek jest częścią otoczki
+            foreach (var hullVertex in convexHull)
+            {
+                if (vertex.point == hullVertex.point)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }
 

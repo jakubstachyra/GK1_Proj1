@@ -6,19 +6,22 @@ namespace GK_Proj1
         private Bitmap tempBitmap;
         private List<Polygon> polygons = new List<Polygon>();
         private List<Vertex> currPoints = new List<Vertex>();
+
         private int eps = 5;
-        private int offset = 5;
+        private int mouseOffset = 5;
         private int vertexSize = 10;
+        private int offset = 50;
         private bool isDrawingLine = false;
-        private bool isEditing = false;
+        private bool isEditingVertex = false;
         private bool isEditingLine = false;
         private bool isMovingPolygon = false;
-       
+        private bool isOffset = false;
+
         private Polygon? movingPolygon = null;
         private Vertex? prevPoint = null;
         private Vertex? editingVertex = null;
         private Vertex PolygonStart;
-        
+
         private Point prevMousePosition;
         private Point lineStartPoint;
         private Point lineEndPoint;
@@ -43,7 +46,7 @@ namespace GK_Proj1
                         if (!isDrawingLine)
                         {
                             // Klikniêcie lewym przyciskiem myszy - dodaj prostok¹t
-                            var point = new Point(e.X - offset, e.Y - offset);
+                            var point = new Point(e.X - mouseOffset, e.Y - mouseOffset);
                             PolygonStart = new Vertex(point, prevPoint, null);
                             prevPoint = PolygonStart;
                             currPoints.Add(PolygonStart);
@@ -74,7 +77,7 @@ namespace GK_Proj1
                             }
 
                             lineEndPoint = e.Location;
-                            Point point = new Point(e.X - offset, e.Y - offset);
+                            Point point = new Point(e.X - mouseOffset, e.Y - mouseOffset);
                             Vertex newPoint = new Vertex(point, prevPoint, null);
                             if (prevPoint != null)
                             {
@@ -85,7 +88,7 @@ namespace GK_Proj1
                             lineStartPoint = point;
                         }
                         break;
-                    case Mode.Delete:    
+                    case Mode.Delete:
                         foreach (var polygon in polygons)
                         {
                             if (Functions.IsPointInsidePolygon(polygon, e))
@@ -95,7 +98,7 @@ namespace GK_Proj1
 
                             }
                         }
-                    break;
+                        break;
 
                 }
 
@@ -135,7 +138,7 @@ namespace GK_Proj1
                 }
 
             }
-                bitMap.Invalidate(); // Odœwie¿enie obszaru rysowania
+            bitMap.Invalidate(); // Odœwie¿enie obszaru rysowania
         }
         private void CreatePolygon(MouseEventArgs e)
         {
@@ -154,26 +157,26 @@ namespace GK_Proj1
                 // Aktualizuj pozycjê koñcow¹ linii podczas przesuwania myszki
                 lineEndPoint = e.Location;
             }
-            if (isEditing)
+            if (isEditingVertex)
             {
                 if (editingVertex != null)
                 {
                     Functions.MoveVertexByMouse(editingVertex, e, prevMousePosition);
                 }
             }
-            if(isEditingLine)
+            if (isEditingLine)
             {
                 Functions.MoveLineByMouse(editingVertex, e, prevMousePosition);
             }
-            if(isMovingPolygon)
-            { 
+            if (isMovingPolygon)
+            {
                 Functions.MovePolygonByMouse(movingPolygon, e, prevMousePosition);
             }
-            
+
             prevMousePosition = e.Location;
-            bitMap.Invalidate(); // Odœwie¿enie obszaru rysowania
+            bitMap.Invalidate();
         }
-        
+
         private void bitMap_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.DrawImage(tempBitmap, 0, 0);
@@ -181,11 +184,26 @@ namespace GK_Proj1
             {
                 g.Clear(Color.Transparent); // Inicjalizacja t³a bitmapy
             }
-            Functions.DrawPolygon(e, polygons, vertexSize, offset);
+            Functions.DrawPolygon(e, polygons, vertexSize, mouseOffset, isOffset);
+           if(isOffset)
+            {
+                foreach (var polygon in polygons)
+                {
+                    Polygon PolygonOffset = Functions.OffsetPolygon(polygon, offset);
+                    foreach (var vertex in PolygonOffset.vertices)
+                    {
+                        //e.Graphics.FillEllipse(Brushes.Black, vertex.point.X - mouseOffset, vertex.point.Y - mouseOffset, vertexSize, vertexSize);
+                        if (vertex.next != null)
+                        {
+                            e.Graphics.DrawLine(Pens.GreenYellow, vertex.point, vertex.next.point);
+                        }
+                    }
+                }
+            }
 
             foreach (var vertex in currPoints)
             {
-                e.Graphics.FillEllipse(Brushes.Black, vertex.point.X - offset, vertex.point.Y - offset, vertexSize, vertexSize);
+                e.Graphics.FillEllipse(Brushes.Black, vertex.point.X - mouseOffset, vertex.point.Y - mouseOffset, vertexSize, vertexSize);
                 if (vertex.next != null)
                 {
                     e.Graphics.DrawLine(Pens.Black, vertex.point, vertex.next.point);
@@ -232,7 +250,7 @@ namespace GK_Proj1
                 }
             }
         }
-        
+
         private void bitMap_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -240,42 +258,42 @@ namespace GK_Proj1
                 switch (mode)
                 {
                     case Mode.Edit:
-                    foreach (var polygon in polygons)
-                    {
-                        foreach (var vertex in polygon.vertices)
+                        foreach (var polygon in polygons)
                         {
-                            if (Functions.CalculateDistance(vertex.point,e.Location) <= 2 * eps)
+                            foreach (var vertex in polygon.vertices)
                             {
-                                isEditing = true;
-                                editingVertex = vertex;
-                                return;
-                            }    
-                            
-                            if (vertex.next != null)
-                            {
-                                if (Functions.isPointOnLine(vertex.point, vertex.next.point, e.Location, eps) &&
-                                        Functions.CalculateDistance(vertex.point, e.Location) > eps &&
-                                        Functions.CalculateDistance(vertex.next.point, e.Location) > eps)
+                                if (Functions.CalculateDistance(vertex.point, e.Location) <= 2 * eps)
                                 {
-                                    isEditingLine = true;
+                                    isEditingVertex = true;
                                     editingVertex = vertex;
-                                    prevMousePosition = e.Location;
                                     return;
                                 }
-                            }
-                            }
-                    }
-                    break;
-                    case Mode.Move:
-                            foreach (var polygon in polygons)
-                            {
-                                if (Functions.IsPointInsidePolygon(polygon, e))
+
+                                if (vertex.next != null)
                                 {
-                                    movingPolygon = polygon;
-                                    isMovingPolygon = true;
-                                    return;
+                                    if (Functions.isPointOnLine(vertex.point, vertex.next.point, e.Location, eps) &&
+                                            Functions.CalculateDistance(vertex.point, e.Location) > eps &&
+                                            Functions.CalculateDistance(vertex.next.point, e.Location) > eps)
+                                    {
+                                        isEditingLine = true;
+                                        editingVertex = vertex;
+                                        prevMousePosition = e.Location;
+                                        return;
+                                    }
                                 }
                             }
+                        }
+                        break;
+                    case Mode.Move:
+                        foreach (var polygon in polygons)
+                        {
+                            if (Functions.IsPointInsidePolygon(polygon, e))
+                            {
+                                movingPolygon = polygon;
+                                isMovingPolygon = true;
+                                return;
+                            }
+                        }
                         break;
                 }
             }
@@ -285,7 +303,7 @@ namespace GK_Proj1
         {
             if (e.Button == MouseButtons.Left)
             {
-                isEditing = false;
+                isEditingVertex = false;
                 isEditingLine = false;
                 isMovingPolygon = false;
             }
@@ -309,12 +327,21 @@ namespace GK_Proj1
         {
             mode = Mode.Move;
         }
-    }
-    enum Mode
-    {
-        Draw,
-        Edit,
-        Delete,
-        Move,
+
+        private void OffsetBar_Scroll(object sender, EventArgs e)
+        {
+
+        }
+        private void OffsetCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            isOffset = !isOffset;
+        }
+        enum Mode
+        {
+            Draw,
+            Edit,
+            Delete,
+            Move,
+        }
     }
 }

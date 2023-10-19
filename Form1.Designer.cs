@@ -29,84 +29,65 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.ModeGroupBox = new System.Windows.Forms.GroupBox();
+            this.MoveButton = new System.Windows.Forms.RadioButton();
             this.DeleteButton = new System.Windows.Forms.RadioButton();
             this.EditButton = new System.Windows.Forms.RadioButton();
             this.DrawButton = new System.Windows.Forms.RadioButton();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.OffsetGroupBox = new System.Windows.Forms.GroupBox();
+            this.OffsetBar = new System.Windows.Forms.TrackBar();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.bitMap = new System.Windows.Forms.PictureBox();
-            this.MoveButton = new System.Windows.Forms.RadioButton();
+            this.OffsetCheckBox = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
+            this.ModeGroupBox.SuspendLayout();
+            this.OffsetGroupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.OffsetBar)).BeginInit();
             this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bitMap)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
             // 
             this.panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.panel1.Controls.Add(this.ModeGroupBox);
+            this.panel1.Controls.Add(this.OffsetGroupBox);
             this.panel1.Controls.Add(this.groupBox1);
-            this.panel1.Controls.Add(this.groupBox2);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
             this.panel1.Location = new System.Drawing.Point(615, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(185, 450);
             this.panel1.TabIndex = 1;
             // 
-            // groupBox1
+            // ModeGroupBox
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.AutoSize = true;
-            this.groupBox1.Controls.Add(this.radioButton2);
-            this.groupBox1.Controls.Add(this.radioButton1);
-            this.groupBox1.Location = new System.Drawing.Point(6, 350);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(176, 88);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Algorithm";
-            // 
-            // radioButton2
-            // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(16, 47);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(147, 19);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.Text = "Brezenham\'s algorithm";
-            this.radioButton2.UseVisualStyleBackColor = true;
-            // 
-            // radioButton1
-            // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Checked = true;
-            this.radioButton1.Location = new System.Drawing.Point(16, 22);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(116, 19);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Library algorithm";
-            this.radioButton1.UseVisualStyleBackColor = true;
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.ModeGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.MoveButton);
-            this.groupBox2.Controls.Add(this.DeleteButton);
-            this.groupBox2.Controls.Add(this.EditButton);
-            this.groupBox2.Controls.Add(this.DrawButton);
-            this.groupBox2.Controls.Add(this.textBox1);
-            this.groupBox2.Location = new System.Drawing.Point(6, 6);
-            this.groupBox2.MinimumSize = new System.Drawing.Size(176, 338);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(176, 338);
-            this.groupBox2.TabIndex = 1;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Mode";
+            this.ModeGroupBox.Controls.Add(this.MoveButton);
+            this.ModeGroupBox.Controls.Add(this.DeleteButton);
+            this.ModeGroupBox.Controls.Add(this.EditButton);
+            this.ModeGroupBox.Controls.Add(this.DrawButton);
+            this.ModeGroupBox.Location = new System.Drawing.Point(6, 3);
+            this.ModeGroupBox.MinimumSize = new System.Drawing.Size(176, 225);
+            this.ModeGroupBox.Name = "ModeGroupBox";
+            this.ModeGroupBox.Size = new System.Drawing.Size(176, 243);
+            this.ModeGroupBox.TabIndex = 1;
+            this.ModeGroupBox.TabStop = false;
+            this.ModeGroupBox.Text = "Mode";
+            // 
+            // MoveButton
+            // 
+            this.MoveButton.AutoSize = true;
+            this.MoveButton.Location = new System.Drawing.Point(16, 97);
+            this.MoveButton.Name = "MoveButton";
+            this.MoveButton.Size = new System.Drawing.Size(55, 19);
+            this.MoveButton.TabIndex = 4;
+            this.MoveButton.TabStop = true;
+            this.MoveButton.Text = "Move";
+            this.MoveButton.UseVisualStyleBackColor = true;
+            this.MoveButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MoveButton_MouseClick);
             // 
             // DeleteButton
             // 
@@ -143,13 +124,61 @@
             this.DrawButton.UseVisualStyleBackColor = true;
             this.DrawButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DrawButton_MouseClick);
             // 
-            // textBox1
+            // OffsetGroupBox
             // 
-            this.textBox1.Location = new System.Drawing.Point(32, 304);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.Text = "Offset";
+            this.OffsetGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.OffsetGroupBox.Controls.Add(this.OffsetCheckBox);
+            this.OffsetGroupBox.Controls.Add(this.OffsetBar);
+            this.OffsetGroupBox.Location = new System.Drawing.Point(6, 252);
+            this.OffsetGroupBox.MaximumSize = new System.Drawing.Size(176, 110);
+            this.OffsetGroupBox.Name = "OffsetGroupBox";
+            this.OffsetGroupBox.Size = new System.Drawing.Size(176, 92);
+            this.OffsetGroupBox.TabIndex = 5;
+            this.OffsetGroupBox.TabStop = false;
+            this.OffsetGroupBox.Text = "Offset";
+            // 
+            // OffsetBar
+            // 
+            this.OffsetBar.Location = new System.Drawing.Point(16, 59);
+            this.OffsetBar.Name = "OffsetBar";
+            this.OffsetBar.Size = new System.Drawing.Size(147, 45);
+            this.OffsetBar.TabIndex = 0;
+            this.OffsetBar.Scroll += new System.EventHandler(this.OffsetBar_Scroll);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.AutoSize = true;
+            this.groupBox1.Controls.Add(this.radioButton2);
+            this.groupBox1.Controls.Add(this.radioButton1);
+            this.groupBox1.Location = new System.Drawing.Point(6, 350);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(176, 88);
+            this.groupBox1.TabIndex = 0;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Algorithm";
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Location = new System.Drawing.Point(16, 47);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(147, 19);
+            this.radioButton2.TabIndex = 1;
+            this.radioButton2.Text = "Brezenham\'s algorithm";
+            this.radioButton2.UseVisualStyleBackColor = true;
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.Checked = true;
+            this.radioButton1.Location = new System.Drawing.Point(16, 22);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(116, 19);
+            this.radioButton1.TabIndex = 0;
+            this.radioButton1.TabStop = true;
+            this.radioButton1.Text = "Library algorithm";
+            this.radioButton1.UseVisualStyleBackColor = true;
             // 
             // bitMap
             // 
@@ -167,17 +196,16 @@
             this.bitMap.MouseMove += new System.Windows.Forms.MouseEventHandler(this.bitMap_MouseMove);
             this.bitMap.MouseUp += new System.Windows.Forms.MouseEventHandler(this.bitMap_MouseUp);
             // 
-            // MoveButton
+            // OffsetCheckBox
             // 
-            this.MoveButton.AutoSize = true;
-            this.MoveButton.Location = new System.Drawing.Point(16, 97);
-            this.MoveButton.Name = "MoveButton";
-            this.MoveButton.Size = new System.Drawing.Size(55, 19);
-            this.MoveButton.TabIndex = 4;
-            this.MoveButton.TabStop = true;
-            this.MoveButton.Text = "Move";
-            this.MoveButton.UseVisualStyleBackColor = true;
-            this.MoveButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MoveButton_MouseClick);
+            this.OffsetCheckBox.AutoSize = true;
+            this.OffsetCheckBox.Location = new System.Drawing.Point(16, 22);
+            this.OffsetCheckBox.Name = "OffsetCheckBox";
+            this.OffsetCheckBox.Size = new System.Drawing.Size(58, 19);
+            this.OffsetCheckBox.TabIndex = 5;
+            this.OffsetCheckBox.Text = "Offset";
+            this.OffsetCheckBox.UseVisualStyleBackColor = true;
+            this.OffsetCheckBox.CheckedChanged += new System.EventHandler(this.OffsetCheckBox_CheckedChanged);
             // 
             // Form1
             // 
@@ -190,10 +218,13 @@
             this.Text = "Form1";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.ModeGroupBox.ResumeLayout(false);
+            this.ModeGroupBox.PerformLayout();
+            this.OffsetGroupBox.ResumeLayout(false);
+            this.OffsetGroupBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.OffsetBar)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bitMap)).EndInit();
             this.ResumeLayout(false);
 
@@ -204,12 +235,14 @@
         private GroupBox groupBox1;
         private RadioButton radioButton2;
         private RadioButton radioButton1;
-        private GroupBox groupBox2;
-        private TextBox textBox1;
+        private GroupBox ModeGroupBox;
         private PictureBox bitMap;
         private RadioButton EditButton;
         private RadioButton DrawButton;
         private RadioButton DeleteButton;
         private RadioButton MoveButton;
+        private GroupBox OffsetGroupBox;
+        private TrackBar OffsetBar;
+        private CheckBox OffsetCheckBox;
     }
 }
