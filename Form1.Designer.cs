@@ -29,6 +29,9 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.RelationGroupBox = new System.Windows.Forms.GroupBox();
+            this.HorizontalCheckBox = new System.Windows.Forms.CheckBox();
+            this.VerticalCheckBox = new System.Windows.Forms.CheckBox();
             this.ModeGroupBox = new System.Windows.Forms.GroupBox();
             this.MoveButton = new System.Windows.Forms.RadioButton();
             this.DeleteButton = new System.Windows.Forms.RadioButton();
@@ -42,6 +45,7 @@
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.bitMap = new System.Windows.Forms.PictureBox();
             this.panel1.SuspendLayout();
+            this.RelationGroupBox.SuspendLayout();
             this.ModeGroupBox.SuspendLayout();
             this.OffsetGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.OffsetBar)).BeginInit();
@@ -52,6 +56,7 @@
             // panel1
             // 
             this.panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.panel1.Controls.Add(this.RelationGroupBox);
             this.panel1.Controls.Add(this.ModeGroupBox);
             this.panel1.Controls.Add(this.OffsetGroupBox);
             this.panel1.Controls.Add(this.groupBox1);
@@ -60,6 +65,39 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(185, 450);
             this.panel1.TabIndex = 1;
+            // 
+            // RelationGroupBox
+            // 
+            this.RelationGroupBox.Controls.Add(this.HorizontalCheckBox);
+            this.RelationGroupBox.Controls.Add(this.VerticalCheckBox);
+            this.RelationGroupBox.Location = new System.Drawing.Point(6, 139);
+            this.RelationGroupBox.Name = "RelationGroupBox";
+            this.RelationGroupBox.Size = new System.Drawing.Size(176, 114);
+            this.RelationGroupBox.TabIndex = 6;
+            this.RelationGroupBox.TabStop = false;
+            this.RelationGroupBox.Text = "Relation";
+            // 
+            // HorizontalCheckBox
+            // 
+            this.HorizontalCheckBox.AutoSize = true;
+            this.HorizontalCheckBox.Location = new System.Drawing.Point(16, 47);
+            this.HorizontalCheckBox.Name = "HorizontalCheckBox";
+            this.HorizontalCheckBox.Size = new System.Drawing.Size(104, 19);
+            this.HorizontalCheckBox.TabIndex = 3;
+            this.HorizontalCheckBox.Text = "Add horizontal";
+            this.HorizontalCheckBox.UseVisualStyleBackColor = true;
+            this.HorizontalCheckBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.HorizontalCheckBox_MouseClick);
+            // 
+            // VerticalCheckBox
+            // 
+            this.VerticalCheckBox.AutoSize = true;
+            this.VerticalCheckBox.Location = new System.Drawing.Point(16, 22);
+            this.VerticalCheckBox.Name = "VerticalCheckBox";
+            this.VerticalCheckBox.Size = new System.Drawing.Size(89, 19);
+            this.VerticalCheckBox.TabIndex = 2;
+            this.VerticalCheckBox.Text = "Add vertical";
+            this.VerticalCheckBox.UseVisualStyleBackColor = true;
+            this.VerticalCheckBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.VerticalCheckBox_MouseClick);
             // 
             // ModeGroupBox
             // 
@@ -70,9 +108,9 @@
             this.ModeGroupBox.Controls.Add(this.EditButton);
             this.ModeGroupBox.Controls.Add(this.DrawButton);
             this.ModeGroupBox.Location = new System.Drawing.Point(6, 3);
-            this.ModeGroupBox.MinimumSize = new System.Drawing.Size(176, 225);
+            this.ModeGroupBox.MinimumSize = new System.Drawing.Size(176, 135);
             this.ModeGroupBox.Name = "ModeGroupBox";
-            this.ModeGroupBox.Size = new System.Drawing.Size(176, 243);
+            this.ModeGroupBox.Size = new System.Drawing.Size(176, 135);
             this.ModeGroupBox.TabIndex = 1;
             this.ModeGroupBox.TabStop = false;
             this.ModeGroupBox.Text = "Mode";
@@ -152,7 +190,7 @@
             // 
             this.OffsetBar.LargeChange = 10;
             this.OffsetBar.Location = new System.Drawing.Point(16, 47);
-            this.OffsetBar.Maximum = 100;
+            this.OffsetBar.Maximum = 90;
             this.OffsetBar.Minimum = 10;
             this.OffsetBar.Name = "OffsetBar";
             this.OffsetBar.Size = new System.Drawing.Size(147, 45);
@@ -222,6 +260,8 @@
             this.Text = "Form1";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.RelationGroupBox.ResumeLayout(false);
+            this.RelationGroupBox.PerformLayout();
             this.ModeGroupBox.ResumeLayout(false);
             this.ModeGroupBox.PerformLayout();
             this.OffsetGroupBox.ResumeLayout(false);
@@ -248,5 +288,8 @@
         private GroupBox OffsetGroupBox;
         private TrackBar OffsetBar;
         private CheckBox OffsetCheckBox;
+        private GroupBox RelationGroupBox;
+        private CheckBox HorizontalCheckBox;
+        private CheckBox VerticalCheckBox;
     }
 }

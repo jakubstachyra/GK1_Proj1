@@ -15,6 +15,8 @@ namespace GK_Proj1
         private bool isEditingVertex = false;
         private bool isEditingLine = false;
         private bool isMovingPolygon = false;
+        private bool isHorizontal = false;
+        private bool isVertical = false;
         private bool isOffset = false;
 
         private Polygon? movingPolygon = null;
@@ -25,6 +27,7 @@ namespace GK_Proj1
         private Point prevMousePosition;
         private Point lineStartPoint;
         private Point lineEndPoint;
+
         public Form1()
         {
             InitializeComponent();
@@ -88,6 +91,41 @@ namespace GK_Proj1
                             lineStartPoint = point;
                         }
                         break;
+                    case Mode.Edit:
+                        if (isHorizontal || isVertical)
+                        {
+                            foreach (var polygon in polygons)
+                            {
+                                foreach (var vertex in polygon.vertices)
+                                {
+                                    if (vertex.next != null)
+                                    {
+                                        if (Functions.isPointOnLine(vertex.point, vertex.next.point, e.Location, 2 * eps))
+                                        {
+                                            if (isHorizontal)
+                                            {
+                                                if (vertex.next.relation != Relation.Vertical && vertex.prev.relation != Relation.Vertical)
+                                                {
+                                                    vertex.relation = Relation.Horizontal;
+                                                    vertex.next.relation = Relation.Horizontal;
+                                                    vertex.next.point = new Point(vertex.next.point.X, vertex.point.Y);
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (vertex.next.relation != Relation.Horizontal)
+                                                {
+                                                    vertex.relation = Relation.Vertical;
+                                                    vertex.next.relation = Relation.Vertical;
+                                                    vertex.next.point = new Point(vertex.point.X, vertex.next.point.Y);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                            break;
                     case Mode.Delete:
                         foreach (var polygon in polygons)
                         {
@@ -135,6 +173,22 @@ namespace GK_Proj1
 
                         }
                         break;
+                    case Mode.Edit:
+                        foreach (var polygon in polygons)
+                        {
+                            foreach (var vertex in polygon.vertices)
+                            {
+                                if (vertex.next != null)
+                                {
+                                    if (Functions.isPointOnLine(vertex.point, vertex.next.point, e.Location, 2 * eps))
+                                    {
+                                        vertex.relation = Relation.None;
+                                        vertex.next.relation = Relation.None;
+                                    }
+                                }
+                            }
+                        }
+                        break;
                 }
 
             }
@@ -157,12 +211,9 @@ namespace GK_Proj1
                 // Aktualizuj pozycjê koñcow¹ linii podczas przesuwania myszki
                 lineEndPoint = e.Location;
             }
-            if (isEditingVertex)
+            if (isEditingVertex && editingVertex != null)
             {
-                if (editingVertex != null)
-                {
-                    Functions.MoveVertexByMouse(editingVertex, e, prevMousePosition);
-                }
+                Functions.MoveVertexByMouse(editingVertex, e, prevMousePosition);
             }
             if (isEditingLine)
             {
@@ -189,14 +240,14 @@ namespace GK_Proj1
             {
                 foreach (var polygon in polygons)
                 {
-                    Polygon PolygonsOffset = Functions.OffsetPolygon(polygon, offset);
-                   
-                        foreach (var vertex in PolygonsOffset.vertices)
+                    Polygon PolygonOffset = Functions.OffsetPolygon(polygon, offset);
+                        foreach (var vertex in PolygonOffset.vertices)
                         {
                             e.Graphics.FillEllipse(Brushes.Black, vertex.point.X - mouseOffset, vertex.point.Y - mouseOffset, vertexSize, vertexSize);
                             if (vertex.next != null)
                             {
                                 e.Graphics.DrawLine(Pens.Red, vertex.point, vertex.next.point);
+                            bitMap.Invalidate();
                             }
 
                         }
@@ -348,6 +399,18 @@ namespace GK_Proj1
         {
             isOffset = !isOffset;
         }
+        private void VerticalCheckBox_MouseClick(object sender, MouseEventArgs e)
+        {
+            isVertical = VerticalCheckBox.Checked;
+            HorizontalCheckBox.Checked = false;
+            isHorizontal = false;
+        }
+        private void HorizontalCheckBox_MouseClick(object sender, MouseEventArgs e)
+        {
+            isHorizontal = HorizontalCheckBox.Checked;
+            VerticalCheckBox.Checked = false;
+            isVertical = false;
+        }
         enum Mode
         {
             Draw,
@@ -355,5 +418,6 @@ namespace GK_Proj1
             Delete,
             Move,
         }
+
     }
 }

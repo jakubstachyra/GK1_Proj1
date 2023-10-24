@@ -11,7 +11,7 @@ namespace GK_Proj1
 {
     static class Functions
     {
-        public static void BresenhamLine(UserControl usercontrol  , Point P1, Point P2, Color color, Bitmap canvas)
+        public static void BresenhamLine(UserControl usercontrol, Point P1, Point P2, Color color, Bitmap canvas)
         {
             usercontrol.BackgroundImage = null;
             int dx = P2.X - P1.X;
@@ -28,7 +28,7 @@ namespace GK_Proj1
             }
             else
                 d2 = new Point(d1.X, 0);
-            
+
             int numerator = longerDim >> 1;
 
             for (int i = 0; i <= longerDim; ++i)
@@ -52,12 +52,12 @@ namespace GK_Proj1
         }
         public static void DrawPolygon(PaintEventArgs e, List<Polygon> polygons, int vertexSize, int mouseOffset, bool isOffset)
         {
-            
+
             foreach (var polygon in polygons)
             {
                 foreach (var vertex in polygon.vertices)
                 {
-                    e.Graphics.FillEllipse(Brushes.Black,  vertex.point.X - mouseOffset, vertex.point.Y - mouseOffset, vertexSize ,vertexSize);
+                    e.Graphics.FillEllipse(Brushes.Black, vertex.point.X - mouseOffset, vertex.point.Y - mouseOffset, vertexSize, vertexSize);
                     if (vertex.next != null)
                     {
                         e.Graphics.DrawLine(Pens.Black, vertex.point, vertex.next.point);
@@ -129,7 +129,7 @@ namespace GK_Proj1
         }
         public static void MovePolygonByMouse(Polygon? polygon, MouseEventArgs e, Point prevMousePosition)
         {
-            if(polygon != null)
+            if (polygon != null)
             {
                 foreach (var vertex in polygon.vertices)
                 {
@@ -154,9 +154,11 @@ namespace GK_Proj1
             int dx = e.Location.X - prevMousePosition.X;
             int dy = e.Location.Y - prevMousePosition.Y;
 
-            // Aktualizuj pozycję wierzchołka
+            // Aktualizacja pozycji bieżącego wierzchołka
             vertex.point = new Point(vertex.point.X + dx, vertex.point.Y + dy);
+
         }
+
         public static Polygon OffsetPolygon(Polygon originalPolygon, float offsetDistance)
         {
             Polygon offsetPolygon = new Polygon(new List<Vertex>());
@@ -182,16 +184,17 @@ namespace GK_Proj1
                     (int)(currentVertex.point.X + offsetVector.X * offsetDistance),
                     (int)(currentVertex.point.Y + offsetVector.Y * offsetDistance));
 
-                // Ensure the offset polygon remains outside the original polygon
-                if (IsInsideOriginalPolygon(offsetPoint, originalPolygon))
-                {
-                    // If offsetPoint is inside the original polygon, invert the offset direction
-                    offsetPoint = new Point(
-                        (int)(currentVertex.point.X - offsetVector.X * offsetDistance),
-                        (int)(currentVertex.point.Y - offsetVector.Y * offsetDistance));
-                }
+                // Sprawdzamy, czy przesunięty wierzchołek jest częścią otoczki
+                bool isConvexHullVertex = IsConvexHullVertex(currentVertex, originalPolygon.vertices);
 
-                offsetPolygon.vertices.Add(new Vertex(offsetPoint, null, null));
+                if (isConvexHullVertex)
+                {
+                    offsetPolygon.vertices.Add(new Vertex(offsetPoint, null, null));
+                }
+                else
+                {
+                    offsetPolygon.vertices.Add(currentVertex);
+                }
             }
 
             for (int i = 0; i < offsetPolygon.vertices.Count; i++)
@@ -208,108 +211,41 @@ namespace GK_Proj1
 
             return offsetPolygon;
         }
-
-        public static bool IsInsideOriginalPolygon(Point point, Polygon originalPolygon)
-        {
-            int numIntersections = 0;
-
-            for (int i = 0; i < originalPolygon.vertices.Count; i++)
-            {
-                Point vertex1 = originalPolygon.vertices[i].point;
-                Point vertex2 = originalPolygon.vertices[(i + 1) % originalPolygon.vertices.Count].point;
-
-                // Check if the point is on the edge of the polygon
-                if (vertex1 == point)
-                    return true;
-
-                // Ensure vertex2 has a greater Y-coordinate
-                if (vertex1.Y > vertex2.Y)
-                {
-                    Point temp = vertex1;
-                    vertex1 = vertex2;
-                    vertex2 = temp;
-                }
-
-                // Check if the point is within the Y-range of this edge
-                if (point.Y > vertex1.Y && point.Y <= vertex2.Y && point.X <= Math.Max(vertex1.X, vertex2.X))
-                {
-                    // Calculate the intersection point's X-coordinate
-                    double xIntersection = (point.Y - vertex1.Y) * (vertex2.X - vertex1.X) / (vertex2.Y - vertex1.Y) + vertex1.X;
-
-                    // Check if the intersection point is to the left of the point in question
-                    if (point.X <= xIntersection)
-                    {
-                        numIntersections++;
-                    }
-                }
-            }
-
-            return numIntersections % 2 == 1;
-        }
-
-
         public static Polygon ResolveSelfIntersections(Polygon offsetPolygon)
         {
-            bool intersectionsFound = true;
-
-            while (intersectionsFound)
+            for (int i = 0; i < offsetPolygon.vertices.Count; i++)
             {
-                intersectionsFound = false; // Reset the flag
-                List<Vertex> newVertices = new List<Vertex>();
+                Vertex vertexA = offsetPolygon.vertices[i];
+                Vertex vertexB = offsetPolygon.vertices[(i + 1) % offsetPolygon.vertices.Count];
 
-                for (int i = 0; i < offsetPolygon.vertices.Count; i++)
+                for (int j = i + 2; j < offsetPolygon.vertices.Count; j++)
                 {
-                    Vertex vertexA = offsetPolygon.vertices[i];
-                    Vertex vertexB = offsetPolygon.vertices[(i + 1) % offsetPolygon.vertices.Count];
-                    bool intersectionOccurred = false;
+                    Vertex vertexC = offsetPolygon.vertices[j];
+                    Vertex vertexD = offsetPolygon.vertices[(j + 1) % offsetPolygon.vertices.Count];
 
-                    for (int j = i + 2; j < offsetPolygon.vertices.Count; j++)
+                    // Check if the line segment (vertexA, vertexB) intersects with (vertexC, vertexD)
+                    if (DoLineSegmentsIntersect(vertexA.point, vertexB.point, vertexC.point, vertexD.point))
                     {
-                        Vertex vertexC = offsetPolygon.vertices[j];
-                        Vertex vertexD = offsetPolygon.vertices[(j + 1) % offsetPolygon.vertices.Count];
+                        // Calculate the intersection point
+                        Point intersectionPoint = CalculateIntersectionPoint(vertexA.point, vertexB.point, vertexC.point, vertexD.point);
 
-                        // Check if the line segment (vertexA, vertexB) intersects with (vertexC, vertexD)
-                        if (DoLineSegmentsIntersect(vertexA.point, vertexB.point, vertexC.point, vertexD.point))
-                        {
-                            // Calculate the intersection point and replace the vertices with it
-                            Point intersectionPoint = CalculateIntersectionPoint(vertexA.point, vertexB.point, vertexC.point, vertexD.point);
+                        // Create new vertices
+                        Vertex newVertex1 = new Vertex(intersectionPoint, vertexA, vertexC);
+                        Vertex newVertex2 = new Vertex(intersectionPoint, vertexB, vertexD);
 
-                            // Create a new polygon with the vertices from the original to the intersection point
-                            Polygon newPolygon = new Polygon(newVertices);
-                            newPolygon.vertices.Add(new Vertex(intersectionPoint, null, null));
+                        // Update the next and prev references for the neighboring vertices
+                        vertexA.next = newVertex1;
+                        vertexC.prev = newVertex1;
+                        vertexB.next = newVertex2;
+                        vertexD.prev = newVertex2;
 
-                            // Replace the vertices in the original polygon with the new vertices
-                            offsetPolygon.vertices.RemoveRange(i + 1, j - i);
-                            offsetPolygon.vertices.InsertRange(i + 1, newPolygon.vertices);
+                        // Replace the vertices
+                        offsetPolygon.vertices.RemoveRange(i + 1, j - i);
+                        offsetPolygon.vertices.Insert(i + 1, newVertex1);
+                        offsetPolygon.vertices.Insert(i + 2, newVertex2);
 
-                            intersectionsFound = true; // Set the flag to continue checking
-                            intersectionOccurred = true;
-                            break; // Exit the inner loop to start checking again
-                        }
-                    }
-
-                    if (!intersectionOccurred)
-                    {
-                        newVertices.Add(vertexA);
-                    }
-                }
-
-                if (intersectionsFound)
-                {
-                    // Calculate the index for the vertices to be replaced
-                    int startIndex = offsetPolygon.vertices.IndexOf(newVertices.First());
-                    int count = newVertices.Count;
-
-                    // Ensure that startIndex is within the valid range
-                    if (startIndex >= 0)
-                    {
-                        // Remove the old vertices and insert the new ones
-                        offsetPolygon.vertices.RemoveRange(startIndex, count);
-                        offsetPolygon.vertices.InsertRange(startIndex, newVertices);
-                    }
-                    else
-                    {
-                        continue;
+                        // Recursively check for additional intersections
+                        return ResolveSelfIntersections(offsetPolygon);
                     }
                 }
             }
@@ -355,13 +291,15 @@ namespace GK_Proj1
 
         public static Point CalculateIntersectionPoint(Point p1, Point p2, Point p3, Point p4)
         {
-            double m1 = (double)(p2.Y - p1.Y) / (p2.X - p1.X);
-            double m2 = (double)(p4.Y - p3.Y) / (p4.X - p3.X);
+            // Calculate the slopes of the two line segments
+            float m1 = (float)(p2.Y - p1.Y) / (p2.X - p1.X);
+            float m2 = (float)(p4.Y - p3.Y) / (p4.X - p3.X);
 
-            double x = (m1 * p1.X - m2 * p3.X + p3.Y - p1.Y) / (m1 - m2);
-            double y = m1 * (x - p1.X) + p1.Y;
+            // Calculate the intersection point
+            float x = (m1 * p1.X - m2 * p3.X + p3.Y - p1.Y) / (m1 - m2);
+            float y = m1 * (x - p1.X) + p1.Y;
 
-            return new Point((int)Math.Round(x), (int)Math.Round(y)); // Round to the nearest integer.
+            return new Point((int)x, (int)y);
         }
 
         public static bool IsConvexHullVertex(Vertex vertex, List<Vertex> convexHull)
@@ -378,4 +316,3 @@ namespace GK_Proj1
         }
     }
 }
-

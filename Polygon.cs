@@ -17,6 +17,7 @@ namespace GK_Proj1
             this.point = point;
             this.next = next;
             this.prev = prev;
+            this.relation = Relation.None;
         }
         public Vertex(Point point, Vertex? prev, Vertex? next, Relation relation)
         {
@@ -37,6 +38,7 @@ namespace GK_Proj1
     enum Relation {
         Horizontal,
         Vertical,
+        None,
     }
 
 }
