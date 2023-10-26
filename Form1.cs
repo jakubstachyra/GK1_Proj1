@@ -2,6 +2,9 @@ namespace GK_Proj1
 {
     public partial class Form1 : Form
     {
+        static Image imageVertical = Image.FromFile("D:\\Kuba\\GK_Proj1\\GK_Proj1\\Images\\vertical.png");
+        static Image imageHorizontal = Image.FromFile("D:\\Kuba\\GK_Proj1\\GK_Proj1\\Images\\horizontal.png");
+        
         private Mode mode;
         private Bitmap tempBitmap;
         private List<Polygon> polygons = new List<Polygon>();
@@ -17,6 +20,7 @@ namespace GK_Proj1
         private bool isMovingPolygon = false;
         private bool isHorizontal = false;
         private bool isVertical = false;
+        private bool isDeletingRel = false;
         private bool isOffset = false;
 
         private Polygon? movingPolygon = null;
@@ -32,7 +36,7 @@ namespace GK_Proj1
         {
             InitializeComponent();
             tempBitmap = new Bitmap(3840, 2160);
-            using (Graphics g = Graphics.FromImage(tempBitmap))
+            using  (Graphics g = Graphics.FromImage(tempBitmap))
             {
                 g.Clear(Color.Transparent); // Inicjalizacja t³a bitmapy
             }
@@ -92,40 +96,44 @@ namespace GK_Proj1
                         }
                         break;
                     case Mode.Edit:
-                        if (isHorizontal || isVertical)
+                        if (isHorizontal || isVertical || isDeletingRel)
                         {
                             foreach (var polygon in polygons)
                             {
                                 foreach (var vertex in polygon.vertices)
                                 {
-                                    if (vertex.next != null)
+                                    if (vertex.next != null && vertex.prev != null)
                                     {
                                         if (Functions.isPointOnLine(vertex.point, vertex.next.point, e.Location, 2 * eps))
                                         {
-                                            if (isHorizontal)
+                                            if (isHorizontal && vertex.next.nextRelation != Relation.Horizontal && vertex.prevRelation != Relation.Horizontal && vertex.nextRelation
+                                                != Relation.Horizontal)
                                             {
-                                                if (vertex.next.relation != Relation.Vertical && vertex.prev.relation != Relation.Vertical)
-                                                {
-                                                    vertex.relation = Relation.Horizontal;
-                                                    vertex.next.relation = Relation.Horizontal;
-                                                    vertex.next.point = new Point(vertex.next.point.X, vertex.point.Y);
-                                                }
+                                                vertex.nextRelation = Relation.Horizontal;
+                                                vertex.next.prevRelation = Relation.Horizontal;
+                                                vertex.next.point = new Point(vertex.next.point.X, vertex.point.Y);
+                                                var center = Functions.FindCenterOfLine(vertex.point, vertex.next.point);
                                             }
-                                            else
+                                            else if (isVertical && vertex.next.prevRelation != Relation.Vertical && vertex.prevRelation != Relation.Vertical)
                                             {
-                                                if (vertex.next.relation != Relation.Horizontal)
-                                                {
-                                                    vertex.relation = Relation.Vertical;
-                                                    vertex.next.relation = Relation.Vertical;
-                                                    vertex.next.point = new Point(vertex.point.X, vertex.next.point.Y);
-                                                }
+                                                vertex.nextRelation = Relation.Vertical;
+                                                vertex.next.prevRelation = Relation.Vertical;
+                                                vertex.next.point = new Point(vertex.point.X, vertex.next.point.Y);
+                                                var center = Functions.FindCenterOfLine(vertex.point, vertex.next.point);
+
+                                            }
+                                            else if(isDeletingRel)
+                                            {
+                                                vertex.nextRelation = Relation.None;
+                                                vertex.next.prevRelation = Relation.None;
                                             }
                                         }
                                     }
                                 }
                             }
                         }
-                            break;
+                        break;
+
                     case Mode.Delete:
                         foreach (var polygon in polygons)
                         {
@@ -157,6 +165,8 @@ namespace GK_Proj1
                                     {
                                         vertex.prev.next = vertex.next;
                                         vertex.next.prev = vertex.prev;
+                                        vertex.prev.nextRelation = Relation.None;
+                                        vertex.next.prevRelation = Relation.None;
                                     }
                                     if (polygon.vertices.Count > 3)
                                     {
@@ -182,8 +192,7 @@ namespace GK_Proj1
                                 {
                                     if (Functions.isPointOnLine(vertex.point, vertex.next.point, e.Location, 2 * eps))
                                     {
-                                        vertex.relation = Relation.None;
-                                        vertex.next.relation = Relation.None;
+                                        
                                     }
                                 }
                             }
@@ -208,7 +217,6 @@ namespace GK_Proj1
         {
             if (isDrawingLine)
             {
-                // Aktualizuj pozycjê koñcow¹ linii podczas przesuwania myszki
                 lineEndPoint = e.Location;
             }
             if (isEditingVertex && editingVertex != null)
@@ -291,6 +299,10 @@ namespace GK_Proj1
                             if (Functions.isPointOnLine(vertex.point, vertex.next.point, e.Location, eps))
                             {
                                 var newVertex = new Vertex(Functions.FindCenterOfLine(vertex.point, vertex.next.point), vertex, vertex.next);
+                                vertex.nextRelation = Relation.None;
+                                vertex.prevRelation = Relation.None;
+                                vertex.next.prevRelation = Relation.None;
+                                vertex.prev.nextRelation = Relation.None;
                                 vertex.next.prev = newVertex;
                                 vertex.next = newVertex;
 
@@ -369,6 +381,10 @@ namespace GK_Proj1
 
         private void EditButton_MouseClick(object sender, MouseEventArgs e)
         {
+            DrawButton.Checked = false;
+            MoveButton.Checked = false;
+            DeleteButton.Checked = false;
+            EditButton.Checked = true;
             isDrawingLine = false;
             currPoints.Clear();
             mode = Mode.Edit;
@@ -401,15 +417,21 @@ namespace GK_Proj1
         }
         private void VerticalCheckBox_MouseClick(object sender, MouseEventArgs e)
         {
+            EditButton_MouseClick(sender, e);
             isVertical = VerticalCheckBox.Checked;
-            HorizontalCheckBox.Checked = false;
             isHorizontal = false;
+            isDeletingRel = false;
+            DeleteRelationCheckBox.Checked = false;
+            HorizontalCheckBox.Checked = false;
         }
         private void HorizontalCheckBox_MouseClick(object sender, MouseEventArgs e)
         {
+            EditButton_MouseClick(sender, e);
             isHorizontal = HorizontalCheckBox.Checked;
-            VerticalCheckBox.Checked = false;
             isVertical = false;
+            isDeletingRel = false;
+            DeleteRelationCheckBox.Checked = false;
+            VerticalCheckBox.Checked = false;
         }
         enum Mode
         {
@@ -419,5 +441,15 @@ namespace GK_Proj1
             Move,
         }
 
+        private void DeleteRelationCheckBox_MouseClick(object sender, MouseEventArgs e)
+        {
+            EditButton_MouseClick(sender, e);
+            isDeletingRel = DeleteRelationCheckBox.Checked;
+            HorizontalCheckBox.Checked = false;
+            VerticalCheckBox.Checked = false;
+            isHorizontal = false;
+            isVertical = false;
+            
+        }
     }
 }

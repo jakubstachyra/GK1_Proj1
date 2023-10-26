@@ -11,20 +11,15 @@ namespace GK_Proj1
         public Point point { get; set; }
         public Vertex? next { get; set; }
         public Vertex? prev { get; set; }
-        public Relation relation { get; set; }
-        public Vertex(Point point, Vertex? prev, Vertex? next)
+        public Relation prevRelation;
+        public Relation nextRelation;
+    public Vertex(Point point, Vertex? prev, Vertex? next)
         {
             this.point = point;
             this.next = next;
             this.prev = prev;
-            this.relation = Relation.None;
-        }
-        public Vertex(Point point, Vertex? prev, Vertex? next, Relation relation)
-        {
-            this.point = point;
-            this.next = next;
-            this.prev = prev;
-            this.relation = relation;
+            prevRelation = Relation.None;
+            nextRelation = Relation.None;
         }
     }
     internal class Polygon

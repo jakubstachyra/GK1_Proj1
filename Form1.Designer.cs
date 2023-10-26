@@ -44,6 +44,7 @@
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.bitMap = new System.Windows.Forms.PictureBox();
+            this.DeleteRelationCheckBox = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             this.RelationGroupBox.SuspendLayout();
             this.ModeGroupBox.SuspendLayout();
@@ -68,6 +69,7 @@
             // 
             // RelationGroupBox
             // 
+            this.RelationGroupBox.Controls.Add(this.DeleteRelationCheckBox);
             this.RelationGroupBox.Controls.Add(this.HorizontalCheckBox);
             this.RelationGroupBox.Controls.Add(this.VerticalCheckBox);
             this.RelationGroupBox.Location = new System.Drawing.Point(6, 139);
@@ -249,6 +251,17 @@
             this.bitMap.MouseMove += new System.Windows.Forms.MouseEventHandler(this.bitMap_MouseMove);
             this.bitMap.MouseUp += new System.Windows.Forms.MouseEventHandler(this.bitMap_MouseUp);
             // 
+            // DeleteRelationCheckBox
+            // 
+            this.DeleteRelationCheckBox.AutoSize = true;
+            this.DeleteRelationCheckBox.Location = new System.Drawing.Point(16, 72);
+            this.DeleteRelationCheckBox.Name = "DeleteRelationCheckBox";
+            this.DeleteRelationCheckBox.Size = new System.Drawing.Size(102, 19);
+            this.DeleteRelationCheckBox.TabIndex = 4;
+            this.DeleteRelationCheckBox.Text = "Delete relation";
+            this.DeleteRelationCheckBox.UseVisualStyleBackColor = true;
+            this.DeleteRelationCheckBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DeleteRelationCheckBox_MouseClick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -291,5 +304,6 @@
         private GroupBox RelationGroupBox;
         private CheckBox HorizontalCheckBox;
         private CheckBox VerticalCheckBox;
+        private CheckBox DeleteRelationCheckBox;
     }
 }

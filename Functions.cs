@@ -11,6 +11,7 @@ namespace GK_Proj1
 {
     static class Functions
     {
+       static int eps = 4;
         public static void BresenhamLine(UserControl usercontrol, Point P1, Point P2, Color color, Bitmap canvas)
         {
             usercontrol.BackgroundImage = null;
@@ -61,6 +62,34 @@ namespace GK_Proj1
                     if (vertex.next != null)
                     {
                         e.Graphics.DrawLine(Pens.Black, vertex.point, vertex.next.point);
+                        if (vertex.nextRelation == vertex.next.prevRelation && vertex.nextRelation != Relation.None)
+                        {
+                            Pen boldPen = new Pen(Color.Green, 3);
+                            var center = Functions.FindCenterOfLine(vertex.point, vertex.next.point);
+                            center.Y = center.Y + eps;
+                           
+                            if (vertex.nextRelation == Relation.Horizontal)
+                            {
+                                var center2 = center;
+                                center.X = center.X - eps;
+                                center2.X = center2.X + eps;
+                                e.Graphics.DrawLine(boldPen, center, center2);
+                                center.Y = center.Y - 2 * eps;
+                                center2.Y = center2.Y - 2 * eps;
+                                e.Graphics.DrawLine(boldPen, center, center2);
+                            }
+                            if(vertex.nextRelation == Relation.Vertical)
+                            {
+                                var center2 = center;
+                                center2.Y = center2.Y - 2 * eps;
+                                e.Graphics.DrawLine(boldPen, center, center2);
+                                center.X = center2.X - eps;
+                                center2.Y = center.Y;
+                                center2.X = center2.X + eps;
+                                e.Graphics.DrawLine(boldPen, center, center2);
+                            }
+
+                        }
                     }
                 }
             }
@@ -133,30 +162,89 @@ namespace GK_Proj1
             {
                 foreach (var vertex in polygon.vertices)
                 {
-                    MoveVertexByMouse(vertex, e, prevMousePosition);
+                    MoveVertexByMouse(vertex, e, prevMousePosition,true);
                 }
             }
         }
         public static void MoveLineByMouse(Vertex? editingVertex, MouseEventArgs e, Point prevMousePosition)
         {
-            if (editingVertex != null && editingVertex.next != null)
+            if (editingVertex != null && editingVertex.next != null && editingVertex.prev != null)
             {
                 int dx = e.Location.X - prevMousePosition.X;
                 int dy = e.Location.Y - prevMousePosition.Y;
 
                 // Aktualizuj pozycje wierzchołków linii wraz z linią
-                editingVertex.point = new Point(editingVertex.point.X + dx, editingVertex.point.Y + dy);
+                editingVertex.point = new Point(editingVertex.point.X + dx, editingVertex.point.Y + dy);      
                 editingVertex.next.point = new Point(editingVertex.next.point.X + dx, editingVertex.next.point.Y + dy);
+                
+                
+                if (editingVertex.next != null && editingVertex.nextRelation == Relation.Horizontal && editingVertex.next.prevRelation == Relation.Horizontal)
+                {
+                    editingVertex.next.point = new Point(editingVertex.next.point.X, editingVertex.point.Y);
+                    var centre = FindCenterOfLine(editingVertex.point, editingVertex.next.point);
+                    //Graphics.DrawImage(imageHorizontal, centre);
+                }
+                if (editingVertex.next.next != null && editingVertex.next.nextRelation == Relation.Horizontal && editingVertex.next.next.prevRelation == Relation.Horizontal)
+                {
+                    editingVertex.next.next.point = new Point(editingVertex.next.next.point.X, editingVertex.next.point.Y);
+                }
+                if (editingVertex.prev != null && editingVertex.prevRelation == Relation.Horizontal && editingVertex.prev.nextRelation == Relation.Horizontal)
+                {
+                    editingVertex.prev.point = new Point(editingVertex.prev.point.X, editingVertex.point.Y);
+                }
+                if (editingVertex.prev.prev != null && editingVertex.prev.prev.prevRelation == Relation.Horizontal && editingVertex.prev.prev.nextRelation == Relation.Horizontal)
+                {
+                    editingVertex.prev.prev.point = new Point(editingVertex.prev.prev.point.X, editingVertex.prev.point.Y);
+                }
+
+                
+
+                if (editingVertex.next != null && editingVertex.nextRelation == Relation.Vertical && editingVertex.next.prevRelation == Relation.Vertical)
+                {
+                    editingVertex.next.point = new Point(editingVertex.point.X, editingVertex.next.point.Y);
+                }
+                if (editingVertex.prev != null && editingVertex.prevRelation == Relation.Vertical && editingVertex.prev.nextRelation == Relation.Vertical)
+                {
+                    editingVertex.prev.point = new Point(editingVertex.point.X, editingVertex.prev.point.Y);
+                }
+                if (editingVertex.next.next != null && editingVertex.next.nextRelation == Relation.Vertical && editingVertex.next.next.prevRelation == Relation.Vertical)
+                {
+                    editingVertex.next.next.point = new Point(editingVertex.next.point.X, editingVertex.next.next.point.Y);
+                }
+
+                if (editingVertex.prev.prev != null && editingVertex.prev.prev.prevRelation == Relation.Vertical && editingVertex.prev.prev.nextRelation == Relation.Vertical)
+                {
+                    editingVertex.prev.prev.point = new Point(editingVertex.prev.point.X, editingVertex.prev.prev.point.Y);
+                }
             }
         }
-        public static void MoveVertexByMouse(Vertex vertex, MouseEventArgs e, Point prevMousePosition)
+        public static void MoveVertexByMouse(Vertex vertex, MouseEventArgs e, Point prevMousePosition, bool movePolygon = false)
         {
             int dx = e.Location.X - prevMousePosition.X;
             int dy = e.Location.Y - prevMousePosition.Y;
 
             // Aktualizacja pozycji bieżącego wierzchołka
             vertex.point = new Point(vertex.point.X + dx, vertex.point.Y + dy);
-
+            
+            if(!movePolygon)
+            {
+                if (vertex.next != null && vertex.nextRelation == Relation.Horizontal && vertex.next.prevRelation == Relation.Horizontal)
+                {
+                    vertex.next.point = new Point(vertex.next.point.X, vertex.point.Y);
+                }
+                if (vertex.prev != null && vertex.prevRelation == Relation.Horizontal && vertex.prev.nextRelation == Relation.Horizontal)
+                {
+                    vertex.prev.point = new Point(vertex.prev.point.X, vertex.point.Y);
+                }
+                if (vertex.next != null && vertex.nextRelation == Relation.Vertical && vertex.next.prevRelation == Relation.Vertical)
+                {
+                    vertex.next.point = new Point(vertex.point.X, vertex.next.point.Y);
+                }
+                if (vertex.prev != null && vertex.prevRelation == Relation.Vertical && vertex.prev.nextRelation == Relation.Vertical)
+                {
+                    vertex.prev.point = new Point(vertex.point.X, vertex.prev.point.Y);
+                }
+            }
         }
 
         public static Polygon OffsetPolygon(Polygon originalPolygon, float offsetDistance)
@@ -252,8 +340,6 @@ namespace GK_Proj1
 
             return offsetPolygon;
         }
-
-
 
         public static bool DoLineSegmentsIntersect(Point p1, Point p2, Point p3, Point p4)
         {
