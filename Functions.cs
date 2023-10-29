@@ -12,9 +12,9 @@ namespace GK_Proj1
     static class Functions
     {
        static int eps = 4;
-        public static void BresenhamLine(UserControl usercontrol, Point P1, Point P2, Color color, Bitmap canvas)
+        public static void BresenhamLine( Point P1, Point P2, Color color, Bitmap canvas)
         {
-            usercontrol.BackgroundImage = null;
+            
             int dx = P2.X - P1.X;
             int dy = P2.Y - P1.Y;
             Point d1 = new Point(Math.Sign(dx), Math.Sign(dy));
@@ -48,10 +48,9 @@ namespace GK_Proj1
                     P1.Offset(d2);
                 }
             }
-            usercontrol.BackgroundImage = canvas;
-
+            
         }
-        public static void DrawPolygon(PaintEventArgs e, List<Polygon> polygons, int vertexSize, int mouseOffset, bool isOffset)
+        public static void DrawPolygon(PaintEventArgs e, List<Polygon> polygons, int vertexSize, int mouseOffset, bool isBersenham, Bitmap canvas)
         {
 
             foreach (var polygon in polygons)
@@ -61,7 +60,14 @@ namespace GK_Proj1
                     e.Graphics.FillEllipse(Brushes.Black, vertex.point.X - mouseOffset, vertex.point.Y - mouseOffset, vertexSize, vertexSize);
                     if (vertex.next != null)
                     {
-                        e.Graphics.DrawLine(Pens.Black, vertex.point, vertex.next.point);
+                        if (isBersenham)
+                        {
+                            BresenhamLine(vertex.point, vertex.next.point, Color.Green, canvas );
+                        }
+                        else
+                        {
+                            e.Graphics.DrawLine(Pens.Black, vertex.point, vertex.next.point);
+                        }
                         if (vertex.nextRelation == vertex.next.prevRelation && vertex.nextRelation != Relation.None)
                         {
                             Pen boldPen = new Pen(Color.Green, 3);
@@ -198,7 +204,6 @@ namespace GK_Proj1
                 }
 
                 
-
                 if (editingVertex.next != null && editingVertex.nextRelation == Relation.Vertical && editingVertex.next.prevRelation == Relation.Vertical)
                 {
                     editingVertex.next.point = new Point(editingVertex.point.X, editingVertex.next.point.Y);
@@ -251,7 +256,7 @@ namespace GK_Proj1
         {
             Polygon offsetPolygon = new Polygon(new List<Vertex>());
 
-            for (int i = 0; i < originalPolygon.vertices.Count; i++)
+            for (int i = 0; i < originalPolygon.vertices.Count ; i++)
             {
                 Vertex currentVertex = originalPolygon.vertices[i];
                 Vertex prevVertex = originalPolygon.vertices[(i - 1 + originalPolygon.vertices.Count) % originalPolygon.vertices.Count];
@@ -262,8 +267,19 @@ namespace GK_Proj1
 
                 Vector2 edgeNormal = new Vector2(-edge.Y, edge.X);
                 Vector2 prevEdgeNormal = new Vector2(-prevEdge.Y, prevEdge.X);
-                edgeNormal = Vector2.Normalize(edgeNormal);
-                prevEdgeNormal = Vector2.Normalize(prevEdgeNormal);
+
+
+                if (IsClockwiseOffset(originalPolygon))
+                {
+                    edgeNormal = Vector2.Normalize(edgeNormal);
+                    prevEdgeNormal = Vector2.Normalize(prevEdgeNormal);
+                }
+                else
+                {
+                    edgeNormal = Vector2.Normalize(-edgeNormal);
+                    prevEdgeNormal = Vector2.Normalize(-prevEdgeNormal);
+                }
+
 
                 Vector2 offsetVector = edgeNormal + prevEdgeNormal;
                 offsetVector = Vector2.Normalize(offsetVector);
@@ -301,45 +317,65 @@ namespace GK_Proj1
         }
         public static Polygon ResolveSelfIntersections(Polygon offsetPolygon)
         {
-            for (int i = 0; i < offsetPolygon.vertices.Count; i++)
+            bool intersectionsFound = true;
+
+            while (intersectionsFound)
             {
-                Vertex vertexA = offsetPolygon.vertices[i];
-                Vertex vertexB = offsetPolygon.vertices[(i + 1) % offsetPolygon.vertices.Count];
+                intersectionsFound = false;
 
-                for (int j = i + 2; j < offsetPolygon.vertices.Count; j++)
+                for (int i = 0; i < offsetPolygon.vertices.Count; i++)
                 {
-                    Vertex vertexC = offsetPolygon.vertices[j];
-                    Vertex vertexD = offsetPolygon.vertices[(j + 1) % offsetPolygon.vertices.Count];
+                    Vertex vertexA = offsetPolygon.vertices[i];
+                    Vertex vertexB = offsetPolygon.vertices[(i + 1) % offsetPolygon.vertices.Count];
 
-                    // Check if the line segment (vertexA, vertexB) intersects with (vertexC, vertexD)
-                    if (DoLineSegmentsIntersect(vertexA.point, vertexB.point, vertexC.point, vertexD.point))
+                    for (int j = i + 2; j < offsetPolygon.vertices.Count; j++)
                     {
-                        // Calculate the intersection point
-                        Point intersectionPoint = CalculateIntersectionPoint(vertexA.point, vertexB.point, vertexC.point, vertexD.point);
+                        Vertex vertexC = offsetPolygon.vertices[j];
+                        Vertex vertexD = offsetPolygon.vertices[(j + 1) % offsetPolygon.vertices.Count];
 
-                        // Create new vertices
-                        Vertex newVertex1 = new Vertex(intersectionPoint, vertexA, vertexC);
-                        Vertex newVertex2 = new Vertex(intersectionPoint, vertexB, vertexD);
+                        if (DoLineSegmentsIntersect(vertexA.point, vertexB.point, vertexC.point, vertexD.point))
+                        {
+                            Point intersectionPoint = CalculateIntersectionPoint(vertexA.point, vertexB.point, vertexC.point, vertexD.point);
+                            Vertex newVertex1 = new Vertex(intersectionPoint, vertexA, vertexC);
+                            Vertex newVertex2 = new Vertex(intersectionPoint, vertexB, vertexD);
 
-                        // Update the next and prev references for the neighboring vertices
-                        vertexA.next = newVertex1;
-                        vertexC.prev = newVertex1;
-                        vertexB.next = newVertex2;
-                        vertexD.prev = newVertex2;
+                            // Update next and prev references of vertices correctly
+                            newVertex1.next = newVertex2;
+                            newVertex2.prev = newVertex1;
 
-                        // Replace the vertices
-                        offsetPolygon.vertices.RemoveRange(i + 1, j - i);
-                        offsetPolygon.vertices.Insert(i + 1, newVertex1);
-                        offsetPolygon.vertices.Insert(i + 2, newVertex2);
+                            if (i==0)
+                            {
+                                vertexC.next = newVertex1;
+                                vertexC.prev = vertexC;
+                                newVertex1.next = vertexB;
+                                vertexB.prev = newVertex1;
+                                offsetPolygon.vertices.Insert(0, newVertex1);
+                                offsetPolygon.vertices.Remove(vertexA);
+                                offsetPolygon.vertices.Remove(vertexD);
+                            }
+                            else
+                            {
+                                vertexA.next = newVertex1;
+                                vertexC.prev = newVertex1;
+                                vertexB.next = newVertex2;
+                                vertexD.prev = newVertex2;
 
-                        // Recursively check for additional intersections
-                        return ResolveSelfIntersections(offsetPolygon);
+                                offsetPolygon.vertices.RemoveRange(i + 1, j - i);
+                                offsetPolygon.vertices.Insert(i, newVertex1);
+                                offsetPolygon.vertices.Insert(i + 1, newVertex2);
+                            }
+
+
+
+                            intersectionsFound = true;
+                        }
                     }
                 }
             }
 
             return offsetPolygon;
         }
+
 
         public static bool DoLineSegmentsIntersect(Point p1, Point p2, Point p3, Point p4)
         {
@@ -400,5 +436,20 @@ namespace GK_Proj1
             }
             return false;
         }
+        public static bool IsClockwiseOffset(Polygon polygon)
+        {
+            int sum = 0;
+
+            for (int i = 0; i < polygon.vertices.Count; i++)
+            {
+                Vertex currentVertex = polygon.vertices[i];
+                Vertex nextVertex = polygon.vertices[(i + 1) % polygon.vertices.Count];
+
+                sum += (nextVertex.point.X - currentVertex.point.X) * (nextVertex.point.Y + currentVertex.point.Y);
+            }
+
+            return sum > 0;
+        }
+
     }
 }

@@ -9,16 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Images\horizontal.png" />
-    <None Remove="Images\vertical.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Images\vertical.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Images\horizontal.png" />
+    <Compile Remove="Images\**" />
+    <EmbeddedResource Remove="Images\**" />
+    <None Remove="Images\**" />
   </ItemGroup>
 
 </Project>

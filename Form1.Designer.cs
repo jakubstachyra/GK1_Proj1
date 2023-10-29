@@ -30,6 +30,7 @@
         {
             this.panel1 = new System.Windows.Forms.Panel();
             this.RelationGroupBox = new System.Windows.Forms.GroupBox();
+            this.DeleteRelationCheckBox = new System.Windows.Forms.CheckBox();
             this.HorizontalCheckBox = new System.Windows.Forms.CheckBox();
             this.VerticalCheckBox = new System.Windows.Forms.CheckBox();
             this.ModeGroupBox = new System.Windows.Forms.GroupBox();
@@ -44,7 +45,6 @@
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.bitMap = new System.Windows.Forms.PictureBox();
-            this.DeleteRelationCheckBox = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             this.RelationGroupBox.SuspendLayout();
             this.ModeGroupBox.SuspendLayout();
@@ -78,6 +78,17 @@
             this.RelationGroupBox.TabIndex = 6;
             this.RelationGroupBox.TabStop = false;
             this.RelationGroupBox.Text = "Relation";
+            // 
+            // DeleteRelationCheckBox
+            // 
+            this.DeleteRelationCheckBox.AutoSize = true;
+            this.DeleteRelationCheckBox.Location = new System.Drawing.Point(16, 72);
+            this.DeleteRelationCheckBox.Name = "DeleteRelationCheckBox";
+            this.DeleteRelationCheckBox.Size = new System.Drawing.Size(102, 19);
+            this.DeleteRelationCheckBox.TabIndex = 4;
+            this.DeleteRelationCheckBox.Text = "Delete relation";
+            this.DeleteRelationCheckBox.UseVisualStyleBackColor = true;
+            this.DeleteRelationCheckBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DeleteRelationCheckBox_MouseClick);
             // 
             // HorizontalCheckBox
             // 
@@ -190,9 +201,9 @@
             // 
             // OffsetBar
             // 
-            this.OffsetBar.LargeChange = 10;
+            this.OffsetBar.LargeChange = 8;
             this.OffsetBar.Location = new System.Drawing.Point(16, 47);
-            this.OffsetBar.Maximum = 90;
+            this.OffsetBar.Maximum = 75;
             this.OffsetBar.Minimum = 10;
             this.OffsetBar.Name = "OffsetBar";
             this.OffsetBar.Size = new System.Drawing.Size(147, 45);
@@ -250,17 +261,6 @@
             this.bitMap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.bitMap_MouseDown);
             this.bitMap.MouseMove += new System.Windows.Forms.MouseEventHandler(this.bitMap_MouseMove);
             this.bitMap.MouseUp += new System.Windows.Forms.MouseEventHandler(this.bitMap_MouseUp);
-            // 
-            // DeleteRelationCheckBox
-            // 
-            this.DeleteRelationCheckBox.AutoSize = true;
-            this.DeleteRelationCheckBox.Location = new System.Drawing.Point(16, 72);
-            this.DeleteRelationCheckBox.Name = "DeleteRelationCheckBox";
-            this.DeleteRelationCheckBox.Size = new System.Drawing.Size(102, 19);
-            this.DeleteRelationCheckBox.TabIndex = 4;
-            this.DeleteRelationCheckBox.Text = "Delete relation";
-            this.DeleteRelationCheckBox.UseVisualStyleBackColor = true;
-            this.DeleteRelationCheckBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DeleteRelationCheckBox_MouseClick);
             // 
             // Form1
             // 

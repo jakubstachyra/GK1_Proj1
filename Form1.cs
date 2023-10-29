@@ -1,10 +1,7 @@
 namespace GK_Proj1
 {
     public partial class Form1 : Form
-    {
-        static Image imageVertical = Image.FromFile("D:\\Kuba\\GK_Proj1\\GK_Proj1\\Images\\vertical.png");
-        static Image imageHorizontal = Image.FromFile("D:\\Kuba\\GK_Proj1\\GK_Proj1\\Images\\horizontal.png");
-        
+    {   
         private Mode mode;
         private Bitmap tempBitmap;
         private List<Polygon> polygons = new List<Polygon>();
@@ -243,19 +240,22 @@ namespace GK_Proj1
             {
                 g.Clear(Color.Transparent); // Inicjalizacja t³a bitmapy
             }
-            Functions.DrawPolygon(e, polygons, vertexSize, mouseOffset, isOffset);
+            Functions.DrawPolygon(e, polygons, vertexSize, mouseOffset, radioButton2.Checked,tempBitmap);
            if(isOffset)
             {
                 foreach (var polygon in polygons)
                 {
                     Polygon PolygonOffset = Functions.OffsetPolygon(polygon, offset);
-                        foreach (var vertex in PolygonOffset.vertices)
+                    Pen offsetPen = new Pen(Color.Blue, 2);
+                    foreach (var vertex in PolygonOffset.vertices)
                         {
-                            e.Graphics.FillEllipse(Brushes.Black, vertex.point.X - mouseOffset, vertex.point.Y - mouseOffset, vertexSize, vertexSize);
+                          
                             if (vertex.next != null)
                             {
-                                e.Graphics.DrawLine(Pens.Red, vertex.point, vertex.next.point);
-                            bitMap.Invalidate();
+                                
+                               e.Graphics.DrawLine(offsetPen, vertex.point, vertex.next.point);
+                                bitMap.Invalidate();
+
                             }
 
                         }
@@ -268,14 +268,29 @@ namespace GK_Proj1
                 e.Graphics.FillEllipse(Brushes.Black, vertex.point.X - mouseOffset, vertex.point.Y - mouseOffset, vertexSize, vertexSize);
                 if (vertex.next != null)
                 {
+                    if(radioButton2.Checked)
+                    {
+                        Functions.BresenhamLine(vertex.point, vertex.next.point, Color.Green, tempBitmap);
+                    }
+                    else
+                    {
                     e.Graphics.DrawLine(Pens.Black, vertex.point, vertex.next.point);
+                        
+                    }
                 }
 
             }
             if (isDrawingLine)
             {
-                // Rysuj liniê od  prostok¹ta do pozycji myszki
-                e.Graphics.DrawLine(Pens.Black, lineStartPoint, lineEndPoint);
+                if(radioButton2.Checked)
+                {
+                    Functions.BresenhamLine(lineStartPoint, lineEndPoint, Color.Green, tempBitmap);
+                }
+                else
+                {
+                    e.Graphics.DrawLine(Pens.Black, lineStartPoint, lineEndPoint);
+
+                }
 
             }
             bitMap.Invalidate();
