@@ -37,8 +37,10 @@ namespace GK_Proj1
             {
                 g.Clear(Color.Transparent); // Inicjalizacja t³a bitmapy
             }
-            //List < Vertex > startvertices = new List<Vertex>();
-            //polygons.Add()
+            List<Vertex> startvertices = Functions.StartVertices1();
+            polygons.Add(new Polygon(startvertices));
+            List<Vertex> startvertices2 = Functions.StartVertices2();
+            polygons.Add(new Polygon(startvertices2));
         }
 
         private void bitMap_MouseClick(object sender, MouseEventArgs e)

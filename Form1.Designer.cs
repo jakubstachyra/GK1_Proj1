@@ -202,12 +202,12 @@
             // OffsetBar
             // 
             this.OffsetBar.Location = new System.Drawing.Point(16, 47);
-            this.OffsetBar.Maximum = 50;
+            this.OffsetBar.Maximum = 40;
             this.OffsetBar.Minimum = 10;
             this.OffsetBar.Name = "OffsetBar";
             this.OffsetBar.Size = new System.Drawing.Size(147, 45);
             this.OffsetBar.TabIndex = 0;
-            this.OffsetBar.Value = 25;
+            this.OffsetBar.Value = 20;
             this.OffsetBar.Scroll += new System.EventHandler(this.OffsetBar_Scroll);
             // 
             // groupBox1

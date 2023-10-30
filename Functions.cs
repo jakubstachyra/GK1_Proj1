@@ -450,6 +450,102 @@ namespace GK_Proj1
 
             return sum > 0;
         }
+        public static List<Vertex> StartVertices1()
+        {
+            
+            Vertex v1 = new Vertex(new Point(346, 135), null, null);
+            Vertex v2 = new Vertex(new Point(428, 138), v1, null);
+            v1.next = v2;
+            Vertex v3 = new Vertex(new Point(488, 138), v2, null);
+            v2.next = v3;
+            v2.nextRelation = Relation.Horizontal;
+            Vertex v4 = new Vertex(new Point(578, 190), v3, null);
+            v3.next = v4;
+            v3.prevRelation = Relation.Horizontal;
+            Vertex v5 = new Vertex(new Point(578, 288), v4, null);
+            v4.next = v5;
+            v4.nextRelation = Relation.Vertical;
+            Vertex v6 = new Vertex(new Point(550, 360), v5, null);
+            v5.next = v6;
+            v5.prevRelation = Relation.Vertical;
+            Vertex v7 = new Vertex(new Point(513, 387), v6, null);
+            v6.next = v7;
+            Vertex v8 = new Vertex(new Point(463, 381), v7, null);
+            v7.next = v8;
+            Vertex v9 = new Vertex(new Point(465, 328), v8, null);
+            v8.next = v9;
+            Vertex v10 = new Vertex(new Point(468, 279), v9, null);
+            v9.next = v10;
+            Vertex v11 = new Vertex(new Point(455, 270), v10, null);
+            v10.next = v11;
+            Vertex v12 = new Vertex(new Point(440, 269), v11, null);
+            v11.next = v12;
+            Vertex v13 = new Vertex(new Point(426, 311), v12, null);
+            v12.next = v13;
+            Vertex v14 = new Vertex(new Point(419, 355), v13, null);
+            v13.next = v14;
+            Vertex v15 = new Vertex(new Point(357, 372), v14, null);
+            v14.next = v15;
+            Vertex v16 = new Vertex(new Point(333, 352), v15, null);
+            v15.next = v16;
+            Vertex v17 = new Vertex(new Point(330, 352), v16, null);
+            v16.next = v17;
+            Vertex v18 = new Vertex(new Point(349, 267), v17, null);
+            v17.next = v18;
+            Vertex v19 = new Vertex(new Point(318, 264), v18, null);
+            v18.next = v19;
+            Vertex v20 = new Vertex(new Point(306, 278), v19, null);
+            v19.next = v20;
+            Vertex v21 = new Vertex(new Point(287, 322), v20, null);
+            v20.next = v21;
+            Vertex v22 = new Vertex(new Point(267, 336), v21, null);
+            v21.next = v22;
+            Vertex v23 = new Vertex(new Point(148, 300), v22, null);
+            v22.next = v23;
+            Vertex v24 = new Vertex(new Point(217, 240), v23, null);
+            v23.next = v24;
+            Vertex v25 = new Vertex(new Point(177, 213), v24, null);
+            v24.next = v25;
+            v1.prev = v25;
+            v25.next = v1;
+            List<Vertex> list = new List<Vertex>
+            {
+                v1, v2, v3, v4, v5, v6, v7, v8,
+                v9, v10, v11, v12, v13, v14, v15,
+                v16, v17, v18, v19, v20, v21, v22,
+                v23, v24, v25,
+                
+            };
+            return list;
+        }
+        public static List<Vertex> StartVertices2()
+        {
+            Vertex v1 = new Vertex(new Point(84, 60), null, null);
+            Vertex v2 = new Vertex(new Point(118, 43), v1, null);
+            v1.next = v2;
+            Vertex v3 = new Vertex(new Point(148, 60), v2, null);
+            v2.next = v3;
+            v3.nextRelation = Relation.Vertical;
+            Vertex v4 = new Vertex(new Point(148, 110), v3, null);
+            v3.next = v4;
+            v4.prevRelation = Relation.Vertical;
+            v4.nextRelation = Relation.Horizontal;
+            Vertex v5 = new Vertex(new Point(40, 110), v4, null);
+            v4.next = v5;
+            v5.prevRelation = Relation.Horizontal;
+            Vertex v6 = new Vertex(new Point(30, 30), v5, null);
+            v5.next = v6;
+            Vertex v7 = new Vertex(new Point(104, 90), v6, v1);
+            v6.next = v7;
+            v1.prev = v7;
+            List<Vertex> list = new List<Vertex> 
+            { 
+                v1, v2, v3, v4, v5 ,v6 ,v7
+            
+            };
 
+
+            return list;
+        }
     }
 }
