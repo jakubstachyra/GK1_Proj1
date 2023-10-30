@@ -37,6 +37,8 @@ namespace GK_Proj1
             {
                 g.Clear(Color.Transparent); // Inicjalizacja t³a bitmapy
             }
+            //List < Vertex > startvertices = new List<Vertex>();
+            //polygons.Add()
         }
 
         private void bitMap_MouseClick(object sender, MouseEventArgs e)
@@ -104,14 +106,15 @@ namespace GK_Proj1
                                         if (Functions.isPointOnLine(vertex.point, vertex.next.point, e.Location, 2 * eps))
                                         {
                                             if (isHorizontal && vertex.next.nextRelation != Relation.Horizontal && vertex.prevRelation != Relation.Horizontal && vertex.nextRelation
-                                                != Relation.Horizontal)
+                                                != Relation.Horizontal && vertex.next.prevRelation != Relation.Horizontal)
                                             {
                                                 vertex.nextRelation = Relation.Horizontal;
                                                 vertex.next.prevRelation = Relation.Horizontal;
                                                 vertex.next.point = new Point(vertex.next.point.X, vertex.point.Y);
                                                 var center = Functions.FindCenterOfLine(vertex.point, vertex.next.point);
                                             }
-                                            else if (isVertical && vertex.next.prevRelation != Relation.Vertical && vertex.prevRelation != Relation.Vertical)
+                                            else if (isVertical && vertex.next.prevRelation != Relation.Vertical && vertex.prevRelation != Relation.Vertical && 
+                                                vertex.nextRelation != Relation.Vertical && vertex.next.nextRelation != Relation.Vertical)
                                             {
                                                 vertex.nextRelation = Relation.Vertical;
                                                 vertex.next.prevRelation = Relation.Vertical;
@@ -252,8 +255,7 @@ namespace GK_Proj1
                           
                             if (vertex.next != null)
                             {
-                                
-                               e.Graphics.DrawLine(offsetPen, vertex.point, vertex.next.point);
+                                e.Graphics.DrawLine(offsetPen, vertex.point, vertex.next.point);
                                 bitMap.Invalidate();
 
                             }
@@ -315,9 +317,7 @@ namespace GK_Proj1
                             {
                                 var newVertex = new Vertex(Functions.FindCenterOfLine(vertex.point, vertex.next.point), vertex, vertex.next);
                                 vertex.nextRelation = Relation.None;
-                                vertex.prevRelation = Relation.None;
                                 vertex.next.prevRelation = Relation.None;
-                                vertex.prev.nextRelation = Relation.None;
                                 vertex.next.prev = newVertex;
                                 vertex.next = newVertex;
 

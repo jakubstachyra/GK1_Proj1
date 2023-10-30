@@ -1,0 +1,13 @@
+1. Tryb rysowania:
+	- Nacisniecie lewego klawisza myszy powoduje narysowanie wierzcholka wielokata.
+2. Tryb edycji:
+	- Nacisniecie lewego klawisza myszy na wierzchołku powoduje jego przesuwanie, dopóki klawisz nie zostanie puszczony.
+	- Nacisniecie lewego klawisza myszy na kawedzi powoduje jej przesuwanie dopóki klawisz nie zostanie puszczony.
+	- Nacisniecie dwa razy lewego klawisza myszy na krawedzi powoduje powstanie nowego wierzchołka na jej środku.
+	- W tybie edycji można również dodawać relacje krawędziom, należy wybrać lewym klawiszem myszy pionowa/pozioma/usuwanie relacje i
+	 lewym klawiszem naisnac na krawedz.
+3. Tryb usuwania:
+	- Naciśnięcie lewego klawisza myszy w środku wielokąta powoduje jego usunięcie.
+	- Nacisniecie prawego klawisza myszy na wierzchołku powoduje jego usunięcie.
+4. Tryb przesuwania:
+	- Naciśnięcie lewego klawisza myszy na wielokącie powoduje jego przesuwanie, dopóki klawisz nie zostanie puszczony.

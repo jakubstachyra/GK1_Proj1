@@ -343,7 +343,7 @@ namespace GK_Proj1
                             newVertex1.next = newVertex2;
                             newVertex2.prev = newVertex1;
 
-                            if (i==0)
+                            if (i == 0)
                             {
                                 vertexC.next = newVertex1;
                                 vertexC.prev = vertexC;
